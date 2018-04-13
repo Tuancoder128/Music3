@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp">
+
+    <TextView
+        android:id="@+id/number"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_toEndOf="@id/number"
+        android:gravity="center"
+        android:text="1"
+        android:textColor="#dde67e"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+
+    <TextView
+
+        android:id="@+id/name_song"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/number"
+        android:layout_toRightOf="@id/number"
+        android:text="Name Song"
+        android:textColor="#d67c7c"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/detail"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/name_song"
+        android:layout_toEndOf="@id/number"
+        android:layout_toRightOf="@id/number"
+        android:text="Detail"
+        android:textColor="#fff"
+        android:textSize="10sp"
+        android:textStyle="italic" />
+
+    <TextView
+        android:textColor="#fff"
+        android:id="@+id/time"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/detail"
+        android:layout_below="@id/name_song"
+        android:text="3:38"
+        android:textSize="10sp" />
+
+    <ImageButton
+        android:id="@+id/other"
+        android:layout_width="30dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/ic_menu_moreoverflow_small_pressed" />
+
+
+</RelativeLayout>
+
+
+
+
+
