@@ -6,10 +6,10 @@ package com.bkav.demo.music;
 
 public class ThongTinBaiHat {
 
-   private  String TenBaiHat;
-   private  String Theloai;
-   private int Sothutu;
-   private String Thoigian;
+    private String TenBaiHat;
+    private String Theloai;
+    private int Sothutu;
+    private String Thoigian;
 
     public ThongTinBaiHat(String tenBaiHat, String theloai, int sothutu, String thoigian) {
         TenBaiHat = tenBaiHat;
