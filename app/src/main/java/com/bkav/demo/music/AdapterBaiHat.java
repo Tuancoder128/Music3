@@ -32,7 +32,7 @@ public class AdapterBaiHat extends BaseAdapter {
     private class ViewHolder{
         private TextView mSoThuTu;
         private TextView mTenBaHat;
-        private TextView mTheLoai;
+        //private TextView mTheLoai;
         private TextView mTime;
         private ImageView mOther;
 
@@ -63,7 +63,7 @@ public class AdapterBaiHat extends BaseAdapter {
             viewHolder.mSoThuTu = view.findViewById(R.id.number);
             viewHolder.mTime = view.findViewById(R.id.time);
             viewHolder.mTenBaHat = view.findViewById(R.id.name_song);
-            viewHolder.mTheLoai  = view.findViewById(R.id.detail);
+            //viewHolder.mTheLoai  = view.findViewById(R.id.detail);
             viewHolder.mOther = view.findViewById(R.id.other);
             view.setTag(viewHolder);
         }else {
@@ -73,7 +73,7 @@ public class AdapterBaiHat extends BaseAdapter {
 
         viewHolder.mTenBaHat.setText(thongTinBaiHat.getTenBaiHat());
         viewHolder.mTime.setText(thongTinBaiHat.getThoigian());
-        viewHolder.mTheLoai.setText(thongTinBaiHat.getTheloai());
+        //viewHolder.mTheLoai.setText(thongTinBaiHat.getTheloai());
         viewHolder.mSoThuTu.setText("" + thongTinBaiHat.getSothutu());
         viewHolder.mOther.setOnClickListener(new View.OnClickListener() {
             @Override

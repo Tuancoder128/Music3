@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/anhth"
     tools:context="com.bkav.demo.music.DetailSongRuningActivity">
+    <include
+        layout="@layout/layout_repeat"
+        />
+    <include
+        layout="@layout/layout_seekbar"
+        />
+    <include
+        layout="@layout/layout_seekbar"
+        />
 
-</android.support.constraint.ConstraintLayout>
+    <include
+        android:id="@+id/includebottom"
+        layout="@layout/layout_bottom_go"
+        />
+
+
+
+
+</FrameLayout>

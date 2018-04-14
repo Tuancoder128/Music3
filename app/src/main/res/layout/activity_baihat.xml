@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="10dp">
+    android:layout_height="wrap_content"
+
+    >
 
     <TextView
         android:id="@+id/number"
@@ -11,9 +12,9 @@
         android:layout_toEndOf="@id/number"
         android:gravity="center"
         android:text="1"
-        android:textColor="#dde67e"
+        android:textColor="#282826"
         android:textSize="10sp"
-        android:textStyle="bold" />
+        />
 
 
     <TextView
@@ -24,38 +25,29 @@
         android:layout_toEndOf="@id/number"
         android:layout_toRightOf="@id/number"
         android:text="Name Song"
-        android:textColor="#d67c7c"
+        android:textColor="#181717"
         android:textSize="15sp" />
 
-    <TextView
-        android:id="@+id/detail"
-        android:layout_width="280dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/name_song"
-        android:layout_toEndOf="@id/number"
-        android:layout_toRightOf="@id/number"
-        android:text="Detail"
-        android:textColor="#fff"
-        android:textSize="10sp"
-        android:textStyle="italic" />
+
 
     <TextView
-        android:textColor="#fff"
+        android:textColor="#282826"
         android:id="@+id/time"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@id/detail"
+        android:layout_toRightOf="@id/number"
         android:layout_below="@id/name_song"
         android:text="3:38"
         android:textSize="10sp" />
 
-    <ImageButton
+    <ImageView
+        android:layout_marginRight="15dp"
         android:id="@+id/other"
         android:layout_width="30dp"
         android:layout_height="50dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:background="@drawable/ic_menu_moreoverflow_small_pressed" />
+        android:background="@drawable/ic_menu_moreoverflow_card_dark_active" />
 
 
 </RelativeLayout>

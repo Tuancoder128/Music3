@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.ContentResolver;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private TextView mTime;
     private ImageView mImageAlbum;
     private Button mClickStart;
+    public MediaPlayer player;
 
 
     @Override
@@ -98,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 arrayList.add(new ThongTinBaiHat(currentTittle, currentArist, i, phut + ":" + giay1e));
                 i++;
 
-                Log.d("tuan", "giay" + giay);
+
 
 
             } while (songCursor.moveToNext());
@@ -194,6 +196,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             @Override
             public void onClick(View view) {
                 Toast.makeText(MainActivity.this, "Song Start", Toast.LENGTH_SHORT).show();
+                player =  MediaPlayer.create(getApplicationContext(),R.raw.vietnamquehuongtoi);
+                if(player.isPlaying()){
+                    player.pause();
+                    mClickStart.setBackgroundResource(R.drawable.ic_play_black);
+                }else {
+                    player.start();
+                    mClickStart.setBackgroundResource(R.drawable.ic_play_black);
+                }
             }
         });
 
@@ -203,16 +213,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mListBaiHat.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d("abc", "" + i);
-                Toast.makeText(MainActivity.this, "click" + i, Toast.LENGTH_SHORT).show();
+
                 mCLickTenBaiHat.setText(arrayList.get(i).getTenBaiHat());
                 mCLickTheLoai.setText(arrayList.get(i).getTheloai());
-                Log.d("list", " list" + arrayList.size());
+
 
 
             }
         });
     }
+
+
 
 }
 
