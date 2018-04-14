@@ -43,9 +43,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        init();
+
         checkReadStorage();
-        doStuff();
+        init();
         clickStart();
 
 
@@ -68,30 +68,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         } else {
 
-            doStuff();
+            init();
 
         }
-    }
-
-    public void doStuff() {
-
-
-        arrayList = new ArrayList<>();
-        getMusic();
-        baiHatAdapter = new AdapterBaiHat(getApplicationContext(), R.layout.activity_baihat, arrayList);
-        mListBaiHat.setAdapter(baiHatAdapter);
-        mListBaiHat.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(MainActivity.this, "click", Toast.LENGTH_SHORT).show();
-                mCLickTenBaiHat.setText(arrayList.get(i).getTenBaiHat());
-                mCLickTheLoai.setText(arrayList.get(i).getTheloai());
-                Log.d("list" , " list" + arrayList.size());
-
-            }
-        });
-
-
     }
 
 
@@ -122,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 arrayList.add(new ThongTinBaiHat(currentTittle, currentArist, i, phut + ":" + giay1e));
                 i++;
 
-                Log.d("tuan" , "giay" + giay);
+                Log.d("tuan", "giay" + giay);
 
 
             } while (songCursor.moveToNext());
@@ -141,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     if (ContextCompat.checkSelfPermission(MainActivity.this,
                             Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                         Toast.makeText(this, "permission grandted", Toast.LENGTH_SHORT).show();
-                        doStuff();
+
 
                     }
 
@@ -167,6 +146,26 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mTime = (TextView) findViewById(R.id.time);
         mCLickTheLoai = (TextView) findViewById(R.id.click_theloai);
         mClickStart = (Button) findViewById(R.id.click_start);
+
+
+        arrayList = new ArrayList<>();
+        getMusic();
+        baiHatAdapter = new AdapterBaiHat(getApplicationContext(), R.layout.activity_baihat, arrayList);
+        mListBaiHat.setAdapter(baiHatAdapter);
+
+
+        mListBaiHat.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d("abc", "" + i);
+                Toast.makeText(MainActivity.this, "click" + i, Toast.LENGTH_SHORT).show();
+                mCLickTenBaiHat.setText(arrayList.get(i).getTenBaiHat());
+                mCLickTheLoai.setText(arrayList.get(i).getTheloai());
+                Log.d("list", " list" + arrayList.size());
+
+
+            }
+        });
 
 
     }
