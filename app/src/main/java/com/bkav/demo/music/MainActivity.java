@@ -2,10 +2,14 @@ package com.bkav.demo.music;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -21,10 +25,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
@@ -34,17 +41,22 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private ListView mListBaiHat;
     private static final int MY_PERMISSION_REQUEST = 1;
     private TextView mCLickTenBaiHat;
-    private TextView mCLickTheLoai;
+    private TextView mCLickCasy;
     private TextView mTime;
     private ImageView mImageAlbum;
     private Button mClickStart;
-    public MediaPlayer player;
+    public MediaPlayer mediaPlayer;
+    private LinearLayout mLinearMoveSong;
+    private ArrayList<String> mPath;
+    private  Intent intent;
+    private  Bundle bundle;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         if (ContextCompat.checkSelfPermission(MainActivity.this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -68,8 +80,23 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
         clickSong();
         clickStart();
+        getAllListMusic();
+        clickMoveSong();
 
 
+    }
+
+    private void getAllListMusic() {
+        mPath = new ArrayList<>();
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Music";
+        File file = new File(path);
+        File[] files = file.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            String s = files[i].getName();
+            if (s.endsWith(".mp3")) {
+                mPath.add(files[i].getAbsolutePath());
+            }
+        }
     }
 
 
@@ -99,8 +126,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 }
                 arrayList.add(new ThongTinBaiHat(currentTittle, currentArist, i, phut + ":" + giay1e));
                 i++;
-
-
 
 
             } while (songCursor.moveToNext());
@@ -139,18 +164,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        mTime = (TextView) findViewById(R.id.time);
         mListBaiHat = (ListView) findViewById(R.id.list_album);
         mCLickTenBaiHat = (TextView) findViewById(R.id.click_tenbaihat);
-        mTime = (TextView) findViewById(R.id.time);
-        mCLickTheLoai = (TextView) findViewById(R.id.click_theloai);
+
+        mCLickCasy = (TextView) findViewById(R.id.click_casy);
         mClickStart = (Button) findViewById(R.id.click_start);
+        mLinearMoveSong = (LinearLayout) findViewById(R.id.linear_move_song);
 
         arrayList = new ArrayList<>();
         getMusic();
         baiHatAdapter = new AdapterBaiHat(getApplicationContext(), R.layout.activity_baihat, arrayList);
         mListBaiHat.setAdapter(baiHatAdapter);
-
 
     }
 
@@ -195,15 +220,21 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mClickStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "Song Start", Toast.LENGTH_SHORT).show();
-                player =  MediaPlayer.create(getApplicationContext(),R.raw.vietnamquehuongtoi);
-                if(player.isPlaying()){
-                    player.pause();
-                    mClickStart.setBackgroundResource(R.drawable.ic_play_black);
-                }else {
-                    player.start();
-                    mClickStart.setBackgroundResource(R.drawable.ic_play_black);
+                if(mediaPlayer == null){
+                    try {
+                        mediaPlayer.prepare();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    mediaPlayer.start();
+                    mClickStart.setBackgroundResource(R.drawable.ic_media_pause_light);
+
+                }else{
+                    mediaPlayer.seekTo(mediaPlayer.getCurrentPosition());
+                    mediaPlayer.start();
+
                 }
+
             }
         });
 
@@ -215,14 +246,69 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 mCLickTenBaiHat.setText(arrayList.get(i).getTenBaiHat());
-                mCLickTheLoai.setText(arrayList.get(i).getTheloai());
+                mCLickCasy.setText(arrayList.get(i).getTheloai());
 
+                String local = mPath.get(i);
+
+                try {
+                    mediaPlayer = new MediaPlayer();
+                    mediaPlayer.setDataSource(local);
+                    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    mediaPlayer.prepare();
+                    mediaPlayer.start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                MediaMetadataRetriever retriever = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1) {
+                    retriever = new MediaMetadataRetriever();
+                    retriever.setDataSource(mPath.get(i));
+
+                    String tenAlbum = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                    String ten = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+
+                    mCLickTenBaiHat.setText(ten);
+                    mCLickCasy.setText(tenAlbum);
+
+                }
+
+               bundle = new Bundle();
+               bundle.putInt("vitri", i);
+               bundle.putStringArrayList("tenbai", mPath);
 
 
             }
         });
     }
 
+    private void clickMoveSong() {
+        mLinearMoveSong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent imovesong = new Intent(MainActivity.this, DetailSongRuningActivity.class);
+                imovesong.putExtra("dulieu", bundle);
+                startActivity(imovesong);
+
+            }
+        });
+
+    }
+
+//    private void layFileNhac() {
+//        String duongdan = Environment.getExternalStorageDirectory() + Environment.DIRECTORY_MUSIC;
+//        Uri uri = Uri.parse(duongdan);
+//
+//        mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+//        try {
+//            mediaPlayer.prepare();
+//            mediaPlayer.start();
+//
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
 }
