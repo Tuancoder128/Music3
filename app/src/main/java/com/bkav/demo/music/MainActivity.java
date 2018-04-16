@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private TextView mCLickTenBaiHat;
     private TextView mCLickCasy;
     private TextView mTime;
+    private TextView mNameSong;
     private ImageView mHinhAlbum;
     private Button mClickStart;
     public MediaPlayer mediaPlayer;
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             int songTittle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
             int songTime = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
-            int songImage = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_KEY);
+            int songImage = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
 
 
             do {
@@ -170,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mTime = (TextView) findViewById(R.id.time);
         mListBaiHat = (ListView) findViewById(R.id.list_album);
         mCLickTenBaiHat = (TextView) findViewById(R.id.click_tenbaihat);
-
+        mNameSong = (TextView) findViewById(R.id.name_song);
         mCLickCasy = (TextView) findViewById(R.id.click_casy);
         mClickStart = (Button) findViewById(R.id.click_start);
         mLinearMoveSong = (LinearLayout) findViewById(R.id.linear_move_song);
@@ -223,14 +224,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mClickStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mediaPlayer == null){
-
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.pause();
+                    mClickStart.setBackgroundResource(R.drawable.ic_play_black);
+                }else {
                     mediaPlayer.start();
                     mClickStart.setBackgroundResource(R.drawable.ic_media_pause_light);
-
-                }else{
-                    mediaPlayer.seekTo(mediaPlayer.getCurrentPosition());
-                    mediaPlayer.start();
 
                 }
 
@@ -247,12 +246,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 mCLickTenBaiHat.setText(arrayList.get(i).getTenBaiHat());
                 mCLickCasy.setText(arrayList.get(i).getTheloai());
 
+
                 String local = mPath.get(i);
 
                 try {
                     mediaPlayer = new MediaPlayer();
                     mediaPlayer.setDataSource(local);
                     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    mClickStart.setBackgroundResource(R.drawable.ic_media_pause_light);
                     mediaPlayer.prepare();
                     mediaPlayer.start();
                 } catch (IOException e) {
@@ -299,21 +300,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         });
 
     }
-
-//    private void layFileNhac() {
-//        String duongdan = Environment.getExternalStorageDirectory() + Environment.DIRECTORY_MUSIC;
-//        Uri uri = Uri.parse(duongdan);
-//
-//        mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-//        try {
-//            mediaPlayer.prepare();
-//            mediaPlayer.start();
-//
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
 
 }

@@ -50,7 +50,7 @@
             android:background="@drawable/ic_menu_moreoverflow_large_normal"
             android:layout_toRightOf="@id/danhsach"
             android:layout_width="45dp"
-            android:layout_height="55dp" />
+            android:layout_height="45dp" />
 
 
 
