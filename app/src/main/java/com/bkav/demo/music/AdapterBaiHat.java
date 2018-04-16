@@ -6,7 +6,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -17,7 +16,7 @@ import java.util.ArrayList;
 /**
  * Created by vst on 10/04/2018.
  */
-
+// Bkav QuangLH review 20180415: ham nao da override thi can code cho dung. VD getItemId, getItem
 public class AdapterBaiHat extends BaseAdapter {
 
     private Context context;
@@ -38,41 +37,6 @@ public class AdapterBaiHat extends BaseAdapter {
         private ImageView mOther;
 
     }
-
-    public Filter getFilter() {
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence charSequence) {
-                charSequence = charSequence.toString().toLowerCase();
-                FilterResults results = new FilterResults();
-                if(charSequence != null && charSequence.toString().length() > 0){
-                    ArrayList<ThongTinBaiHat> arrayList = new ArrayList<>();
-                    for (ThongTinBaiHat baihat : arrayList) {
-                        if(baihat.toString().toLowerCase().contains(charSequence)){
-                            arrayList.add(baihat);
-                        }
-                    }
-                    results.values = arrayList;
-                    results.count = arrayList.size();
-                }
-                else {
-                    results.values = arrayList;
-                    results.count = arrayList.size();
-                }
-                return results;
-            }
-
-            @Override
-            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                arrayList.clear();
-                for (ThongTinBaiHat song : (ArrayList<ThongTinBaiHat>) filterResults.values){
-                    arrayList.add(song);
-                }
-                notifyDataSetChanged();
-            }
-        };
-    }
-
 
     @Override
     public int getCount() {

@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 if (giayLe < 10) {
                     giayle = "0" + giayLe;
                 } else {
-                    giayle = giayLe + "";
+                    giayle = String.valueOf(giayLe);
                 }
                // arrayList.add(new ThongTinBaiHat(currentTittle, currentArist, i, phut + ":" + giayle));
                arrayList.add(new ThongTinBaiHat(currentTittle,currentArist,i,currentAlbum, phut + ":" + giayle));

@@ -4,13 +4,12 @@
     android:layout_width="match_parent"
     android:layout_gravity="bottom"
     android:layout_height="160dp">
-    <RelativeLayout
+    <LinearLayout
         android:weightSum="20"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
-            android:id="@+id/repeat"
             android:layout_marginLeft="20dp"
             android:layout_weight="1"
             android:background="@drawable/ic_repeat_dark"
@@ -19,15 +18,13 @@
 
 
         <ImageView
-            android:id="@+id/shuffle"
-            android:layout_marginRight="20dp"
-            android:layout_alignParentRight="true"
+            android:layout_marginLeft="270dp"
             android:layout_weight="1"
             android:background="@drawable/ic_shuffle_dark"
             android:layout_width="35dp"
             android:layout_height="35dp" />
 
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

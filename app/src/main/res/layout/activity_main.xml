@@ -12,38 +12,33 @@
         android:id="@+id/toolbar"
         layout="@layout/layout_toolbar" />
 
-    <LinearLayout
+
+    <RelativeLayout
 
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
+        <ListView
 
+            android:id="@+id/list_album"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_above="@id/include_background">
 
-            <ListView
+        </ListView>
 
-                android:id="@+id/list_album"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/include_background">
-
-            </ListView>
-
-            <include
-                android:id="@+id/include_background"
-                layout="@layout/layout_background" />
+        <include
+            android:id="@+id/include_background"
+            layout="@layout/layout_background" />
 
 
-        </RelativeLayout>
-
-
-    </LinearLayout>
+    </RelativeLayout>
 
 
 </LinearLayout>
+
+
+
 
 
 
