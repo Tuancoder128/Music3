@@ -9,12 +9,14 @@ public class ThongTinBaiHat {
     private String TenBaiHat;
     private String Theloai;
     private int Sothutu;
+    private int HinhAlbum;
     private String Thoigian;
 
-    public ThongTinBaiHat(String tenBaiHat, String theloai, int sothutu, String thoigian) {
+    public ThongTinBaiHat(String tenBaiHat, String theloai, int sothutu, int hinhAlbum, String thoigian) {
         TenBaiHat = tenBaiHat;
         Theloai = theloai;
         Sothutu = sothutu;
+        HinhAlbum = hinhAlbum;
         Thoigian = thoigian;
     }
 
@@ -40,6 +42,14 @@ public class ThongTinBaiHat {
 
     public void setSothutu(int sothutu) {
         Sothutu = sothutu;
+    }
+
+    public int getHinhAlbum() {
+        return HinhAlbum;
+    }
+
+    public void setHinhAlbum(int hinhAlbum) {
+        HinhAlbum = hinhAlbum;
     }
 
     public String getThoigian() {

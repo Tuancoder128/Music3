@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private TextView mCLickTenBaiHat;
     private TextView mCLickCasy;
     private TextView mTime;
-    private ImageView mImageAlbum;
+    private ImageView mHinhAlbum;
     private Button mClickStart;
     public MediaPlayer mediaPlayer;
     private LinearLayout mLinearMoveSong;
@@ -109,22 +109,25 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             int songTittle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
             int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
             int songTime = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
+            int songImage = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_KEY);
 
 
             do {
                 String currentTittle = songCursor.getString(songTittle);
                 String currentArist = songCursor.getString(songArtist);
+                int currentAlbum = songCursor.getInt(songImage);
                 int giay = songCursor.getInt(songTime) / 1000;
 
                 int phut = giay / 60;
                 int giayLe = giay - phut * 60;
-                String giay1e;
+                String giayle;
                 if (giayLe < 10) {
-                    giay1e = "0" + giayLe;
+                    giayle = "0" + giayLe;
                 } else {
-                    giay1e = giayLe + "";
+                    giayle = giayLe + "";
                 }
-                arrayList.add(new ThongTinBaiHat(currentTittle, currentArist, i, phut + ":" + giay1e));
+               // arrayList.add(new ThongTinBaiHat(currentTittle, currentArist, i, phut + ":" + giayle));
+               arrayList.add(new ThongTinBaiHat(currentTittle,currentArist,i,currentAlbum, phut + ":" + giayle));
                 i++;
 
 
@@ -143,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (ContextCompat.checkSelfPermission(MainActivity.this,
                             Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(this, "permission grandted", Toast.LENGTH_SHORT).show();
+
 
 
                     }
@@ -161,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     private void init() {
-
+        mHinhAlbum = (ImageView)findViewById(R.id.hinh_album);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mTime = (TextView) findViewById(R.id.time);
@@ -221,11 +224,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             @Override
             public void onClick(View view) {
                 if(mediaPlayer == null){
-                    try {
-                        mediaPlayer.prepare();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+
                     mediaPlayer.start();
                     mClickStart.setBackgroundResource(R.drawable.ic_media_pause_light);
 
@@ -244,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mListBaiHat.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+                mHinhAlbum.setImageResource(arrayList.get(i).getHinhAlbum());
                 mCLickTenBaiHat.setText(arrayList.get(i).getTenBaiHat());
                 mCLickCasy.setText(arrayList.get(i).getTheloai());
 
@@ -286,6 +285,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mLinearMoveSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mediaPlayer.stop();
+                try {
+                    mediaPlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 Intent imovesong = new Intent(MainActivity.this, DetailSongRuningActivity.class);
                 imovesong.putExtra("dulieu", bundle);
                 startActivity(imovesong);

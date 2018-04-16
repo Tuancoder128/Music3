@@ -26,7 +26,7 @@
             android:id="@+id/time_start"
             android:layout_marginLeft="5dp"
             android:textColor="#282826"
-            android:layout_width="35dp"
+            android:layout_width="45dp"
             android:layout_height="wrap_content"
             android:text="3:28"
             android:textSize="15dp" />
@@ -35,7 +35,7 @@
             android:id="@+id/time_all"
            android:layout_alignParentRight="true"
             android:textColor="#282826"
-            android:layout_width="35dp"
+            android:layout_width="45dp"
             android:layout_height="wrap_content"
             android:text="5:28"
             android:textSize="15dp" />

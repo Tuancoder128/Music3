@@ -129,6 +129,7 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
 
     private void playSongLocaltion() {
         uri = Uri.parse(arrList.get(mLocaltionSong).toString());
+
         mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
         mediaPlayer.start();
         updateSong();
@@ -137,7 +138,7 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
 
     private void allTimeSong() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-        mTimeAll.setText(simpleDateFormat.format(mediaPlayer.getDuration() +""));
+        mTimeAll.setText(simpleDateFormat.format(mediaPlayer.getDuration()));
         mSeekBar.setMax(mediaPlayer.getDuration());
 
 
@@ -186,7 +187,7 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
                         mediaPlayer.stop();
                     }
                     playSongLocaltion();
-                    mPrevious.setImageResource(R.drawable.ic_fab_play_btn_normal);
+                    //mPrevious.setImageResource(R.drawable.ic_fab_play_btn_normal);
                     allTimeSong();
                     updateTime();
                 }
@@ -201,7 +202,7 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
 
                 }
                 playSongLocaltion();
-                mPlayStart.setImageResource(R.drawable.ic_fab_play_btn_normal);
+               // mPlayStart.setImageResource(R.drawable.ic_fab_play_btn_normal);
 
                 allTimeSong();
                 updateTime();
@@ -216,7 +217,7 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
                     mediaPlayer.stop();
                 }
                 playSongLocaltion();
-                mNext.setImageResource(R.drawable.ic_fab_play_btn_normal);
+               // mNext.setImageResource(R.drawable.ic_fab_play_btn_normal);
                 allTimeSong();
                 updateTime();
                 break;
