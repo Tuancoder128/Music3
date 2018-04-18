@@ -9,12 +9,7 @@
     <include
         layout="@layout/layout_repeat"
         />
-    <include
-        layout="@layout/layout_seekbar"
-        />
-    <include
-        layout="@layout/layout_seekbar"
-        />
+
 
     <include
         android:id="@+id/includebottom"
