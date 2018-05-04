@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/ln_activity_main"
     tools:context="com.bkav.demo.music.MainActivity">
 
 
@@ -19,7 +20,8 @@
         android:layout_height="match_parent">
 
         <ListView
-
+            android:dividerHeight="1dp"
+            android:divider="@drawable/custom_divider"
             android:id="@+id/list_album"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

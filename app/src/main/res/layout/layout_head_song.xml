@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:background="#EEEEEE"
+    android:backgroundTint="#95FEFBDE"
     android:layout_width="match_parent"
     android:layout_height="80dp">
     <RelativeLayout
@@ -23,7 +24,7 @@
             android:layout_height="180dp">
             <TextView
                 android:textColor="#181717"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:id="@+id/tencasy"
                 android:text="Ten ca sy"
                 android:layout_width="180dp"
@@ -31,7 +32,7 @@
             <TextView
                 android:textColor="#282826"
                 android:layout_marginTop="5dp"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:id="@+id/tenbaihat"
                 android:text="Ten album"
                 android:layout_width="180dp"
@@ -50,19 +51,6 @@
             android:background="@drawable/ic_menu_moreoverflow_large_normal"
             android:layout_toRightOf="@id/danhsach"
             android:layout_width="45dp"
-            android:layout_height="45dp" />
-
-
-
-
-
-
-
-
-
-
+            android:layout_height="35dp" />
     </RelativeLayout>
-
-
-
 </LinearLayout>

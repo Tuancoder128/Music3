@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private AdapterBaiHat baiHatAdapter;
     private ListView mListBaiHat;
     private static final int MY_PERMISSION_REQUEST = 1;
+    private static final int MY_REQUEST_CODE = 111;
+    private static final int MY_RESULT_CODE = 000;
     private TextView mCLickTenBaiHat;
     private TextView mCLickCasy;
     private TextView mTime;
@@ -49,10 +51,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public MediaPlayer mediaPlayer;
     private LinearLayout mLinearMoveSong;
     private ArrayList<String> mPath;
-    private  Intent intent;
-    private  Bundle bundle;
-
-
+    private Intent intent;
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
             }
 
-
         } else {
+            mediaPlayer = new MediaPlayer();
 
             init();
 
@@ -128,8 +128,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 } else {
                     giayle = String.valueOf(giayLe);
                 }
-               // arrayList.add(new ThongTinBaiHat(currentTittle, currentArist, i, phut + ":" + giayle));
-               arrayList.add(new ThongTinBaiHat(currentTittle,currentArist,i,currentAlbum, phut + ":" + giayle));
+
+                arrayList.add(new ThongTinBaiHat(currentTittle, currentArist, i, currentAlbum, phut + ":" + giayle));
                 i++;
 
 
@@ -148,25 +148,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (ContextCompat.checkSelfPermission(MainActivity.this,
                             Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-
-
-
                     }
-
-
                 } else {
                     Toast.makeText(this, " No permission grandted", Toast.LENGTH_SHORT).show();
                     finish();
-
                 }
-
             }
-
         }
     }
 
     private void init() {
-        mHinhAlbum = (ImageView)findViewById(R.id.hinh_album);
+        mHinhAlbum = (ImageView) findViewById(R.id.hinh_album);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mTime = (TextView) findViewById(R.id.time);
@@ -225,10 +217,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mClickStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mediaPlayer.isPlaying()){
+                if (mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
                     mClickStart.setBackgroundResource(R.drawable.ic_play_black);
-                }else {
+                } else {
                     mediaPlayer.start();
                     mClickStart.setBackgroundResource(R.drawable.ic_media_pause_light);
 
@@ -247,10 +239,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 mCLickTenBaiHat.setText(arrayList.get(i).getTenBaiHat());
                 mCLickCasy.setText(arrayList.get(i).getTheloai());
 
-
                 String local = mPath.get(i);
 
                 try {
+                    if (mediaPlayer.isPlaying()) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        mediaPlayer = null;
+                    }
                     mediaPlayer = new MediaPlayer();
                     mediaPlayer.setDataSource(local);
                     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -258,6 +254,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     mediaPlayer.prepare();
                     mediaPlayer.start();
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
 
@@ -274,9 +272,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
                 }
 
-               bundle = new Bundle();
-               bundle.putInt("vitri", i);
-               bundle.putStringArrayList("tenbai", mPath);
+                bundle = new Bundle();
+                bundle.putInt("vitri", i);
+                bundle.putStringArrayList("tenbai", mPath);
 
 
             }
@@ -287,22 +285,29 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mLinearMoveSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mediaPlayer.stop();
-                try {
-                    mediaPlayer.prepare();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.pause();
                 }
+
+                int time = mediaPlayer.getCurrentPosition();
+                bundle.putInt("thoigian", time);
+
                 Intent imovesong = new Intent(MainActivity.this, DetailSongRuningActivity.class);
                 imovesong.putExtra("dulieu", bundle);
-                startActivity(imovesong);
 
+                startActivityForResult(imovesong, 111);
             }
         });
 
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MY_REQUEST_CODE && resultCode == MY_RESULT_CODE && data != null) {
+            int time = data.getExtras().getInt("time");
+            mediaPlayer.seekTo(time);
+            mediaPlayer.start();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }
-
-

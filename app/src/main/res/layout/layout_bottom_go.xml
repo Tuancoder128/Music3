@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   android:id="@+id/linear_bacground"
+    android:backgroundTint="#95FEFBDE"
     android:layout_width="match_parent"
     android:layout_height="90dp"
     android:layout_gravity="bottom"
@@ -15,7 +17,7 @@
         <SeekBar
             android:id="@+id/seekbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="12dp" />
 
 
     </RelativeLayout>
@@ -47,11 +49,11 @@
 
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="55dp"
         android:layout_weight="1"
-        android:weightSum="15">
+        android:weightSum="10">
 
         <ImageView
             android:id="@+id/like"
@@ -78,7 +80,7 @@
             android:layout_gravity="center"
             android:layout_marginRight="35dp"
             android:layout_weight="2"
-            android:background="@drawable/ic_fab_play_btn_normal" />
+            android:background="@drawable/ic_media_pause_light" />
 
         <ImageView
             android:id="@+id/next"
@@ -94,12 +96,7 @@
             android:layout_width="25dp"
             android:layout_height="35dp"
             android:layout_gravity="center"
-            android:layout_marginRight="35dp"
             android:layout_weight="2"
             android:background="@drawable/ic_thumbs_down_default" />
-
-
     </LinearLayout>
-
-
 </LinearLayout>
