@@ -6,22 +6,11 @@
     android:layout_height="match_parent"
     android:background="@drawable/anhth"
     tools:context="com.bkav.demo.music.DetailSongRuningActivity">
-<<<<<<< HEAD
 
     <include layout="@layout/layout_head_song" />
 
     <include layout="@layout/layout_repeat" />
 
-=======
-
-    <include
-
-        layout="@layout/layout_head_song" />
-
-
-    <include layout="@layout/layout_repeat" />
-
->>>>>>> 2f8365ddafbe24f18b3b977d5fd957128a06db60
     <include
         android:id="@+id/includebottom"
         layout="@layout/layout_bottom_go" />

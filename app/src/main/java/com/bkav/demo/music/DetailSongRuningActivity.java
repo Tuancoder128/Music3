@@ -1,10 +1,13 @@
 package com.bkav.demo.music;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +18,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -26,28 +30,34 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
     private ImageView mPlayStart;
     private ImageView mNext;
     private ImageView mDisLike;
-    private ImageView mHinhCaSy;
-    private TextView mTenCaSy;
-    private TextView mTenBaiHat;
+    public ImageView mHinhCaSy;
+    public TextView mTenCaSy;
+    public TextView mTenBaiHat;
     private TextView mTimeStart;
     private TextView mTimeAll;
     private SeekBar mSeekBar;
     private Intent intent;
-    private Bundle bundle;
-    private int mLocaltionSong;
-    private ArrayList<String> arrList;
-    private Uri uri;
-    private MediaPlayer mediaPlayer;
+    public Bundle bundle;
+    public int mLocaltionSong;
+    public ArrayList<String> arrList;
+    public Uri uri;
+    public MediaPlayer mediaPlayer;
     private int time, t = 0;
     private static final int MY_RESULT_CODE_1 = 100;
     private static final int MY_RESULT_CODE_5 = 500;
     private static final int MY_RESULT_CODE_1000 = 1000;
+    public boolean iboundService = false;
+    public ServiceMusic mserviceMusic ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_song_runing);
         intent = getIntent();
+        Intent intent = new Intent(DetailSongRuningActivity.this,ServiceMusic.class);
+        bindService(intent,serviceConnection,BIND_AUTO_CREATE);
+
         initView();
 
         getDataPush();
@@ -157,33 +167,46 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
         }
     };
 
-    private void playSongLocaltion() {
+    public void playSongLocaltion() {
         uri = Uri.parse(arrList.get(mLocaltionSong).toString());
-        mediaPlayer = new MediaPlayer();
+
         mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
         mediaPlayer.seekTo(time);
         mediaPlayer.start();
-//        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(MediaPlayer mediaPlayer) {
-//
-//            }
-//        });   TODO: để nhạc chạy bài tiếp theo khi hết nhạc
 
-        updateSong();
-
-    }
-
-    private void playSongLocaltion1() {
-        uri = Uri.parse(arrList.get(mLocaltionSong).toString());
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-        mediaPlayer.start();
-
+        completionListener();
         updateSong();
     }
 
-    private void allTimeSong() {
+    private void completionListener(){
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                if (mLocaltionSong < (arrList.size() - 1)) {
+                    playsong(mLocaltionSong+1);
+                    mLocaltionSong = mLocaltionSong + 1;
+                    allTimeSong();
+                    updateTime();
+                    updateSong();
+                }
+            }
+        });
+    }
+
+    public void playsong(int mLocaltionSong){
+        try {
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource(arrList.get(mLocaltionSong));
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public void allTimeSong() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
         mTimeAll.setText(simpleDateFormat.format(mediaPlayer.getDuration()));
         mSeekBar.setMax(mediaPlayer.getDuration());
@@ -191,7 +214,7 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
 
     }
 
-    private void updateTime() {
+    public void updateTime() {
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -205,7 +228,7 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
         }, MY_RESULT_CODE_1);
     }
 
-    private void updateSong() {
+    public void updateSong() {
         MediaMetadataRetriever retriever = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1) {
             retriever = new MediaMetadataRetriever();
@@ -225,46 +248,15 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.previous:
-                mLocaltionSong -= 1;
-                if (mLocaltionSong < 0) {
-                    mLocaltionSong = arrList.size() - 1;
-                } else {
-                    if (mediaPlayer.isPlaying()) {
-                        mediaPlayer.stop();
-                    }
-                    playSongLocaltion1();
-
-                    allTimeSong();
-                    updateTime();
-                }
+                mserviceMusic.previousSong();
                 break;
 
             case R.id.pause_play:
-                if (mediaPlayer.isPlaying()) {
-                    mediaPlayer.pause();
-                    mPlayStart.setBackgroundResource(R.drawable.ic_play_black);
-                } else {
-                    mediaPlayer.start();
-                    mPlayStart.setBackgroundResource(R.drawable.ic_media_pause_light);
-
-                }
-
-                allTimeSong();
-                updateTime();
+                mserviceMusic.playpauseSong();
                 break;
 
             case R.id.next:
-                mLocaltionSong += 1;
-                if (mLocaltionSong > arrList.size() - 1) {
-                    mLocaltionSong = 0;
-                }
-                if (mediaPlayer.isPlaying()) {
-                    mediaPlayer.stop();
-                }
-                playSongLocaltion1();
-
-                allTimeSong();
-                updateTime();
+                mserviceMusic.nextSong();
                 break;
 
 
@@ -280,4 +272,19 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
         finish();
         super.onBackPressed();
     }
+
+    ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            iboundService = true;
+            ServiceMusic.MyBinder binder = (ServiceMusic.MyBinder) iBinder;
+            mserviceMusic = binder.getService();
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+
+        }
+    };
 }

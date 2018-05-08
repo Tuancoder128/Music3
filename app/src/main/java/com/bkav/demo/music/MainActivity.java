@@ -1,8 +1,10 @@
 package com.bkav.demo.music;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.AudioManager;
@@ -10,6 +12,7 @@ import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -27,18 +30,21 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
     private Toolbar toolbar;
     private ArrayList<ThongTinBaiHat> arrayList;
     private AdapterBaiHat baiHatAdapter;
-    private ListView mListBaiHat;
+    public ListView mListBaiHat;
     private static final int MY_PERMISSION_REQUEST = 1;
     private static final int MY_REQUEST_CODE = 111;
     private static final int MY_RESULT_CODE = 000;
@@ -46,18 +52,26 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private TextView mCLickCasy;
     private TextView mTime;
     private TextView mNameSong;
+    private TextView mNumber;
     private ImageView mHinhAlbum;
-    private Button mClickStart;
+    private ImageView mPopupMenu;
+    private ImageView mImagePlaySong;
+    public Button mClickStart;
     public MediaPlayer mediaPlayer;
-    private LinearLayout mLinearMoveSong;
-    private ArrayList<String> mPath;
+    private RelativeLayout mLinearMoveSong;
+    public ArrayList<String> mPath;
     private Intent intent;
     private Bundle bundle;
+    public boolean iboundService = false;
+    public ServiceMusic mserviceMusic;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent intent = new Intent(MainActivity.this, ServiceMusic.class);
+        bindService(intent, serviceConnection, BIND_AUTO_CREATE);
 
 
         if (ContextCompat.checkSelfPermission(MainActivity.this,
@@ -75,14 +89,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         } else {
             mediaPlayer = new MediaPlayer();
-
             init();
 
 
         }
-        clickSong();
-        clickStart();
         getAllListMusic();
+        clickSong();
+        clickStartPauseSOng();
         clickMoveSong();
 
 
@@ -90,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     private void getAllListMusic() {
         mPath = new ArrayList<>();
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Music";
+        final String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Music";
         File file = new File(path);
         File[] files = file.listFiles();
         for (int i = 0; i < files.length; i++) {
@@ -130,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 }
 
                 arrayList.add(new ThongTinBaiHat(currentTittle, currentArist, i, currentAlbum, phut + ":" + giayle));
+
                 i++;
 
 
@@ -159,20 +173,26 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     private void init() {
         mHinhAlbum = (ImageView) findViewById(R.id.hinh_album);
+        mPopupMenu = (ImageView) findViewById(R.id.other);
+        mImagePlaySong = (ImageView) findViewById(R.id.image_icon_play_song);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mTime = (TextView) findViewById(R.id.time);
+        mNumber = (TextView) findViewById(R.id.number);
         mListBaiHat = (ListView) findViewById(R.id.list_album);
         mCLickTenBaiHat = (TextView) findViewById(R.id.click_tenbaihat);
         mNameSong = (TextView) findViewById(R.id.name_song);
         mCLickCasy = (TextView) findViewById(R.id.click_casy);
         mClickStart = (Button) findViewById(R.id.click_start);
-        mLinearMoveSong = (LinearLayout) findViewById(R.id.linear_move_song);
+
+        mLinearMoveSong = (RelativeLayout) findViewById(R.id.linear_move_song);
 
         arrayList = new ArrayList<>();
         getMusic();
         baiHatAdapter = new AdapterBaiHat(getApplicationContext(), R.layout.activity_baihat, arrayList);
         mListBaiHat.setAdapter(baiHatAdapter);
+
 
     }
 
@@ -196,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
                 break;
 
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -209,55 +230,37 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        Toast.makeText(this, newText, Toast.LENGTH_SHORT).show();
+
         return false;
     }
 
-    private void clickStart() {
-        mClickStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mediaPlayer.isPlaying()) {
-                    mediaPlayer.pause();
-                    mClickStart.setBackgroundResource(R.drawable.ic_play_black);
-                } else {
-                    mediaPlayer.start();
-                    mClickStart.setBackgroundResource(R.drawable.ic_media_pause_light);
-
-                }
-
-            }
-        });
-
-    }
 
     private void clickSong() {
         mListBaiHat.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                mNumber.setVisibility(View.INVISIBLE);
+//                mImagePlaySong.setVisibility(View.VISIBLE);
+                String local = mPath.get(i);
+                mserviceMusic.setLocalSongRunging(i);
+
+
+                try {
+                    mserviceMusic.setLocalSong(local);
+                    mClickStart.setBackgroundResource(R.drawable.ic_media_pause_light);
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
                 mHinhAlbum.setImageResource(arrayList.get(i).getHinhAlbum());
                 mCLickTenBaiHat.setText(arrayList.get(i).getTenBaiHat());
                 mCLickCasy.setText(arrayList.get(i).getTheloai());
 
-                String local = mPath.get(i);
 
-                try {
-                    if (mediaPlayer.isPlaying()) {
-                        mediaPlayer.stop();
-                        mediaPlayer.release();
-                        mediaPlayer = null;
-                    }
-                    mediaPlayer = new MediaPlayer();
-                    mediaPlayer.setDataSource(local);
-                    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                    mClickStart.setBackgroundResource(R.drawable.ic_media_pause_light);
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
+
 
                 MediaMetadataRetriever retriever = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1) {
@@ -301,6 +304,25 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     }
 
+    private void clickStartPauseSOng() {
+        mClickStart.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                mserviceMusic.playpauseSong();
+                if (mserviceMusic.mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                    mClickStart.setBackgroundResource(R.drawable.ic_media_pause_light);
+                } else {
+                    mediaPlayer.start();
+                    mClickStart.setBackgroundResource(R.drawable.ic_play_black);
+                }
+
+            }
+        });
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MY_REQUEST_CODE && resultCode == MY_RESULT_CODE && data != null) {
@@ -310,4 +332,34 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            iboundService = true;
+            ServiceMusic.MyBinder binder = (ServiceMusic.MyBinder) iBinder;
+            mserviceMusic = binder.getService();
+
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            iboundService = false;
+        }
+    };
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
