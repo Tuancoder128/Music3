@@ -42,12 +42,13 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
     public ArrayList<String> arrList;
     public Uri uri;
     public MediaPlayer mediaPlayer;
-    private int time, t = 0;
+    private int mTime;
     private static final int MY_RESULT_CODE_1 = 100;
     private static final int MY_RESULT_CODE_5 = 500;
     private static final int MY_RESULT_CODE_1000 = 1000;
+    private static int TIME_START =0;
     public boolean iboundService = false;
-    public ServiceMusic mserviceMusic ;
+    public ServiceMusic mserviceMusic;
 
 
     @Override
@@ -55,8 +56,8 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_song_runing);
         intent = getIntent();
-        Intent intent = new Intent(DetailSongRuningActivity.this,ServiceMusic.class);
-        bindService(intent,serviceConnection,BIND_AUTO_CREATE);
+        Intent intent = new Intent(DetailSongRuningActivity.this, ServiceMusic.class);
+        bindService(intent, serviceConnection, BIND_AUTO_CREATE);
 
         initView();
 
@@ -85,6 +86,8 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
         mPlayStart.setOnClickListener(this);
         mPrevious.setOnClickListener(this);
         mNext.setOnClickListener(this);
+        mLike.setOnClickListener(this);
+        mDisLike.setOnClickListener(this);
 
 
     }
@@ -94,10 +97,10 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(DetailSongRuningActivity.this, MainActivity.class);
-                i.putExtra("time", t);
+                i.putExtra("time", TIME_START);
                 setResult(000, i);
-                if (mediaPlayer.isPlaying()) {
-                    mediaPlayer.pause();
+                if (mserviceMusic.mediaPlayer.isPlaying()) {
+                    mserviceMusic.mediaPlayer.pause();
                 }
                 finish();
             }
@@ -109,7 +112,7 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
         bundle = intent.getBundleExtra("dulieu");
         mLocaltionSong = bundle.getInt("vitri");
         arrList = bundle.getStringArrayList("tenbai");
-        time = bundle.getInt("thoigian");
+        mTime = bundle.getInt("thoigian");
         playSongLocaltion();
         updateSong();
         updateTime();
@@ -171,19 +174,21 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
         uri = Uri.parse(arrList.get(mLocaltionSong).toString());
 
         mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-        mediaPlayer.seekTo(time);
+        mediaPlayer.seekTo(mTime);
         mediaPlayer.start();
 
         completionListener();
         updateSong();
     }
 
-    private void completionListener(){
+
+
+    private void completionListener() {
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 if (mLocaltionSong < (arrList.size() - 1)) {
-                    playsong(mLocaltionSong+1);
+                    playsong(mLocaltionSong + 1);
                     mLocaltionSong = mLocaltionSong + 1;
                     allTimeSong();
                     updateTime();
@@ -193,7 +198,7 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
         });
     }
 
-    public void playsong(int mLocaltionSong){
+    public void playsong(int mLocaltionSong) {
         try {
             mediaPlayer.reset();
             mediaPlayer.setDataSource(arrList.get(mLocaltionSong));
@@ -203,7 +208,6 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
             e.printStackTrace();
         }
     }
-
 
 
     public void allTimeSong() {
@@ -222,7 +226,7 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
                 mTimeStart.setText(simpleDateFormat.format(mediaPlayer.getCurrentPosition()));
                 mSeekBar.setProgress(mediaPlayer.getCurrentPosition());
-                t = mediaPlayer.getCurrentPosition();
+                TIME_START = mediaPlayer.getCurrentPosition();
                 handler.postDelayed(this, MY_RESULT_CODE_5);
             }
         }, MY_RESULT_CODE_1);
@@ -252,10 +256,23 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
                 break;
 
             case R.id.pause_play:
-                mserviceMusic.playpauseSong();
+
+                if (mediaPlayer.isPlaying()) {
+                    mPlayStart.setBackgroundResource(R.drawable.ic_fab_play_btn_normal);
+                    mediaPlayer.pause();
+                } else {
+                    mediaPlayer.start();
+                    mPlayStart.setBackgroundResource(R.drawable.ic_media_pause_dark);
+                }
                 break;
 
             case R.id.next:
+                mserviceMusic.nextSong();
+                break;
+            case R.id.like:
+                mserviceMusic.nextSong();
+                break;
+            case R.id.dis_like:
                 mserviceMusic.nextSong();
                 break;
 
@@ -266,9 +283,9 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
     @Override
     public void onBackPressed() {
         Intent i = new Intent(DetailSongRuningActivity.this, MainActivity.class);
-        i.putExtra("time", t);
+        i.putExtra("time",TIME_START);
         setResult(000, i);
-        if (mediaPlayer.isPlaying()) mediaPlayer.pause();
+        if (mserviceMusic.mediaPlayer.isPlaying()) mserviceMusic.mediaPlayer.pause();
         finish();
         super.onBackPressed();
     }

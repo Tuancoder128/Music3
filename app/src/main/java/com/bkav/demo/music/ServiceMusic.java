@@ -39,25 +39,28 @@ public class ServiceMusic extends Service {
     private ImageView mPlayStart;
     private ImageView mNext;
     private ImageView mDisLike;
-    public ImageView mHinhCaSy;
-    public TextView mTenCaSy;
-    public TextView mTenBaiHat;
+    // Bkav QuangLH Review 20180507: khong de cac View duoi service
+    // --> Dao tao anh em ve BroadcastReceiver
+    //
+    // Bkav QuangLH Review 20180507: khong de public khong can thiet.
+    private ImageView mHinhCaSy;
+    private TextView mTenCaSy;
+    private TextView mTenBaiHat;
     private TextView mTimeStart;
     private TextView mTimeAll;
     private SeekBar mSeekBar;
     private Intent intent;
     public Bundle bundle;
-    public Button mClickStart;
-    public int mLocaltionSong;
-    public ArrayList<String> arrList;
-    public ArrayList<String> mPath;
-    public Uri uri;
-    public MediaPlayer mediaPlayer;
+    private Button mClickStart;
+    private int mLocaltionSong;
+    private ArrayList<String> arrList;
+    private ArrayList<String> mPath;
+    private Uri uri;
+    public static MediaPlayer mediaPlayer; // Bkav QuangLH Review 20180507: convention. Ra soat va sua het.
     private int time, t = 0;
     private static final int MY_RESULT_CODE_1 = 100;
     private static final int MY_RESULT_CODE_5 = 500;
     private static final int MY_RESULT_CODE_1000 = 1000;
-
 
     @Nullable
     @Override
@@ -74,11 +77,11 @@ public class ServiceMusic extends Service {
 
 
 
-
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         return super.onStartCommand(intent, flags, startId);
 
 
@@ -87,6 +90,8 @@ public class ServiceMusic extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mediaPlayer.stop();
+        mediaPlayer.release();
     }
 
     public class MyBinder extends Binder {
@@ -125,13 +130,10 @@ public class ServiceMusic extends Service {
 
 
     public void playpauseSong() {
-        if (mediaPlayer.isPlaying()) {
+        if(mediaPlayer.isPlaying()){
             mediaPlayer.pause();
-
-        } else {
+        }else {
             mediaPlayer.start();
-
-
         }
 
 
@@ -161,25 +163,25 @@ public class ServiceMusic extends Service {
             e.printStackTrace();
         }
     }
-    public void setLocalSongRunging(int vitri){
-        mLocaltionSong = vitri;
-    }
+
 
     public void setLocalSong(String localsong) throws IOException {
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setDataSource(localsong);
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-        if (mediaPlayer.isPlaying()) {
+        if(mediaPlayer != null){
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
+
         }
+
+        mediaPlayer =  new MediaPlayer();
+        mediaPlayer.setDataSource(localsong);
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mediaPlayer.prepare();
         mediaPlayer.start();
-
-
     }
+
+
+
 
     public void playSongLocaltion1() {
         uri = Uri.parse(arrList.get(mLocaltionSong).toString());
@@ -203,6 +205,16 @@ public class ServiceMusic extends Service {
 
 
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

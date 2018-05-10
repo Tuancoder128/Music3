@@ -9,33 +9,28 @@
     tools:context="com.bkav.demo.music.MainActivity">
 
 
-
-
-
-    <RelativeLayout
-
+    <ListView
+        android:dividerHeight="1dp"
+        android:divider="@drawable/custom_divider"
+        android:id="@+id/list_album"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_above="@id/include_background">
 
-        <ListView
-            android:dividerHeight="1dp"
-            android:divider="@drawable/custom_divider"
-            android:id="@+id/list_album"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/include_background">
-
-        </ListView>
-
-        <include
-            android:id="@+id/include_background"
-            layout="@layout/layout_background" />
-
-
-    </RelativeLayout>
-
-
+    </ListView>
 </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

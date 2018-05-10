@@ -42,8 +42,8 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
     private Toolbar toolbar;
-    private ArrayList<ThongTinBaiHat> arrayList;
-    private AdapterBaiHat baiHatAdapter;
+    public ArrayList<ThongTinBaiHat> arrayList;
+    public AdapterBaiHat baiHatAdapter;
     public ListView mListBaiHat;
     private static final int MY_PERMISSION_REQUEST = 1;
     private static final int MY_REQUEST_CODE = 111;
@@ -56,21 +56,22 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private ImageView mHinhAlbum;
     private ImageView mPopupMenu;
     private ImageView mImagePlaySong;
-    public Button mClickStart;
-    public MediaPlayer mediaPlayer;
+    private Button mClickStart;
     private RelativeLayout mLinearMoveSong;
-    public ArrayList<String> mPath;
+    private ArrayList<String> mPath;
+
+
     private Intent intent;
     private Bundle bundle;
     public boolean iboundService = false;
-    public ServiceMusic mserviceMusic;
+    public ServiceMusic mServiceMusic;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Intent intent = new Intent(MainActivity.this, ServiceMusic.class);
+        intent = new Intent(MainActivity.this, ServiceMusic.class);
         bindService(intent, serviceConnection, BIND_AUTO_CREATE);
 
 
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
 
         } else {
-            mediaPlayer = new MediaPlayer();
+            ServiceMusic.mediaPlayer = new MediaPlayer();
             init();
 
 
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
 
-    public void getMusic() {
+    public  void getMusic() {
         ContentResolver contentResolver = getContentResolver();
         Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
@@ -186,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mCLickCasy = (TextView) findViewById(R.id.click_casy);
         mClickStart = (Button) findViewById(R.id.click_start);
 
-        mLinearMoveSong = (RelativeLayout) findViewById(R.id.linear_move_song);
+        mLinearMoveSong = (RelativeLayout) findViewById(R.id.move_song);
 
         arrayList = new ArrayList<>();
         getMusic();
@@ -202,25 +203,25 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         MenuItem search = menu.findItem(R.id.item_search);
         SearchView searchView = (SearchView) search.getActionView();
         searchView.setOnQueryTextListener(MainActivity.this);
-
         return super.onCreateOptionsMenu(menu);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
             case R.id.item_search:
-                // do some thing
                 Toast.makeText(this, "Bạn hãy nhập vào tên bài hát hoặc tên ca sỹ", Toast.LENGTH_SHORT).show();
-
                 break;
-
-
         }
-
         return super.onOptionsItemSelected(item);
     }
+
+
+
+
+
 
     @Override
     public boolean onQueryTextSubmit(String query) {
@@ -242,11 +243,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 //                mNumber.setVisibility(View.INVISIBLE);
 //                mImagePlaySong.setVisibility(View.VISIBLE);
                 String local = mPath.get(i);
-                mserviceMusic.setLocalSongRunging(i);
 
 
                 try {
-                    mserviceMusic.setLocalSong(local);
+                    mServiceMusic.setLocalSong(local);
                     mClickStart.setBackgroundResource(R.drawable.ic_media_pause_light);
 
 
@@ -258,8 +258,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 mHinhAlbum.setImageResource(arrayList.get(i).getHinhAlbum());
                 mCLickTenBaiHat.setText(arrayList.get(i).getTenBaiHat());
                 mCLickCasy.setText(arrayList.get(i).getTheloai());
-
-
 
 
                 MediaMetadataRetriever retriever = null;
@@ -288,11 +286,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mLinearMoveSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mediaPlayer.isPlaying()) {
-                    mediaPlayer.pause();
+                if (mServiceMusic.mediaPlayer.isPlaying()) {
+                    mServiceMusic.mediaPlayer.pause();
                 }
 
-                int time = mediaPlayer.getCurrentPosition();
+                int time = mServiceMusic.mediaPlayer.getCurrentPosition();
                 bundle.putInt("thoigian", time);
 
                 Intent imovesong = new Intent(MainActivity.this, DetailSongRuningActivity.class);
@@ -309,14 +307,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
             @Override
             public void onClick(View view) {
-                mserviceMusic.playpauseSong();
-                if (mserviceMusic.mediaPlayer.isPlaying()) {
-                    mediaPlayer.stop();
-                    mClickStart.setBackgroundResource(R.drawable.ic_media_pause_light);
-                } else {
-                    mediaPlayer.start();
-                    mClickStart.setBackgroundResource(R.drawable.ic_play_black);
-                }
+                mServiceMusic.playpauseSong();
 
             }
         });
@@ -327,10 +318,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MY_REQUEST_CODE && resultCode == MY_RESULT_CODE && data != null) {
             int time = data.getExtras().getInt("time");
-            mediaPlayer.seekTo(time);
-            mediaPlayer.start();
+            ServiceMusic.mediaPlayer.seekTo(time);
+            ServiceMusic.mediaPlayer.start();
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        mServiceMusic.onDestroy();
     }
 
     ServiceConnection serviceConnection = new ServiceConnection() {
@@ -338,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             iboundService = true;
             ServiceMusic.MyBinder binder = (ServiceMusic.MyBinder) iBinder;
-            mserviceMusic = binder.getService();
+            mServiceMusic = binder.getService();
 
 
         }
