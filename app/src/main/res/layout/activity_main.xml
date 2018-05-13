@@ -4,48 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:id="@+id/ln_activity_main"
-    tools:context="com.bkav.demo.music.MainActivity">
+    android:orientation="vertical">
 
-
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/layout_toolbar" />
-
-
-    <RelativeLayout
-
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorToolbar"
+        app:title="@string/title"
+        app:titleTextColor="@color/colorWhite">
 
-        <ListView
-            android:dividerHeight="1dp"
-            android:divider="@drawable/custom_divider"
-            android:id="@+id/list_album"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/include_background">
+    </android.support.v7.widget.Toolbar>
 
-        </ListView>
-
-        <include
-            android:id="@+id/include_background"
-            layout="@layout/layout_background" />
-
-
-    </RelativeLayout>
-
-
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>
-
-
-
-
-
-
-
-
-
-
-

@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://E:\bkav\Music_SVTT_2018\Tuan\Music\Music.iml" filepath="E:\bkav\Music_SVTT_2018\Tuan\Music\Music.iml" />
       <module fileurl="file://$PROJECT_DIR$/Music3.iml" filepath="$PROJECT_DIR$/Music3.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://E:\bkav\Music_SVTT_2018\Tuan\Music\app\app.iml" filepath="E:\bkav\Music_SVTT_2018\Tuan\Music\app\app.iml" />
     </modules>
   </component>
 </project>

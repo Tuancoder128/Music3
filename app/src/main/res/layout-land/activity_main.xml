@@ -9,21 +9,19 @@
     tools:context="com.bkav.demo.music.MainActivity">
 
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/layout_toolbar" />
+
 
     <LinearLayout
         android:orientation="horizontal"
         android:weightSum="5"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-       <FrameLayout
-           android:id="@+id/fragment_list"
-           android:name="com.bkav.demo.music.FragmentListSong"
-           android:layout_weight="2"
-           android:layout_width="0dp"
-           android:layout_height="match_parent"/>
+        <FrameLayout
+            android:id="@+id/fragment_list"
+            android:name="com.bkav.demo.music.FragmentListSong"
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"/>
 
         <FrameLayout
             android:id="@+id/fragment_details"
