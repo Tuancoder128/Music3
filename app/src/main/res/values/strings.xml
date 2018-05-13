@@ -1,11 +1,3 @@
 <resources>
-    <string name="app_name">Music BKAV</string>
-    <string name="title">Music</string>
-    <string name="song_name">The Heart of everything</string>
-    <string name="song_singer">The Heart</string>
-    <string name="menu_search">Search</string>
-    <string name="time_song">5:14</string>
-    <string name="alphabet">A</string>
-    <string name="time_min">00:00</string>
-    <string name="time_max">10:00</string>
+    <string name="app_name">Music</string>
 </resources>

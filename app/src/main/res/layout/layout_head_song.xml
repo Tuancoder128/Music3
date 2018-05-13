@@ -41,7 +41,7 @@
         <ImageView
             android:id="@+id/danhsach"
             android:layout_centerInParent="true"
-            android:background="@drawable/custom_press_home"
+            android:background="@drawable/ic_queue_dark"
             android:layout_toRightOf="@id/linnear_name"
             android:layout_width="35dp"
             android:layout_height="35dp" />
@@ -52,5 +52,18 @@
             android:layout_toRightOf="@id/danhsach"
             android:layout_width="45dp"
             android:layout_height="35dp" />
+
+
+
+
+
+
+
+
+
+
     </RelativeLayout>
+
+
+
 </LinearLayout>

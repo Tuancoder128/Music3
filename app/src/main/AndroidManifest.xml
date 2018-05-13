@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="tutorial.android.bkav.com.mediaappbkav">
+    package="com.bkav.demo.music">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/icon_music"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -20,15 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".MediaPlayBackService"></service>
-
-        <receiver android:name=".MyBroadcastReceiver" >
-            <intent-filter>
-                <action android:name="UsbManager.ACTION_USB_DEVICE_DETACHED" />
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </receiver>
+        <activity android:name=".DetailSongRuningActivity"></activity>
     </application>
 
 </manifest>

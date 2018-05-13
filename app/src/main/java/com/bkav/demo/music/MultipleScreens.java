@@ -4,21 +4,22 @@ import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-public class DetailSongRuningActivity extends AppCompatActivity implements View.OnClickListener {
+/**
+ * Created by vst on 22/04/2018.
+ */
+
+public class MultipleScreens extends AppCompatActivity implements View.OnClickListener{
     private ImageView mHinhDanhSach;
     private ImageView mPopupMenu;
     private ImageView mLike;
@@ -38,10 +39,7 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
     private ArrayList<String> arrList;
     private Uri uri;
     private MediaPlayer mediaPlayer;
-    private int time, t = 0;
-    private static final int MY_RESULT_CODE_1 = 100;
-    private static final int MY_RESULT_CODE_5 = 500;
-    private static final int MY_RESULT_CODE_1000 = 1000;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +47,8 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
         setContentView(R.layout.activity_detail_song_runing);
         intent = getIntent();
         initView();
-
         getDataPush();
-        backHome();
+
 
     }
 
@@ -79,44 +76,26 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
 
     }
 
-    private void backHome() {
-        mHinhDanhSach.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(DetailSongRuningActivity.this, MainActivity.class);
-                i.putExtra("time", t);
-                setResult(000, i);
-                if (mediaPlayer.isPlaying()) {
-                    mediaPlayer.pause();
-                }
-                finish();
-            }
-        });
 
-    }
 
     private void getDataPush() {
         bundle = intent.getBundleExtra("dulieu");
         mLocaltionSong = bundle.getInt("vitri");
         arrList = bundle.getStringArrayList("tenbai");
-        time = bundle.getInt("thoigian");
         playSongLocaltion();
         updateSong();
-        updateTime();
+        updateSong();
         runSeekbar();
         allTimeSong();
 
-    }
 
+    }
 
     private void runSeekbar() {
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if (b) {
-                    mediaPlayer.seekTo(i);
-                    mSeekBar.setProgress(i);
-                }
+
             }
 
             @Override
@@ -127,62 +106,29 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 mediaPlayer.seekTo(seekBar.getProgress());
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+                if (mTimeStart.equals(simpleDateFormat.format(mediaPlayer.getCurrentPosition() + ""))) {
+                    mLocaltionSong += 1;
+                    playSongLocaltion();
+                    mPlayStart.setImageResource(R.drawable.ic_play_black);
+                    allTimeSong();
+                    updateTime();
 
-            }
-        });
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (mediaPlayer != null) {
-                    try {
-                        Message msg = new Message();
-                        msg.what = mediaPlayer.getCurrentPosition();
-                        handler.sendMessage(msg);
-
-                        Thread.sleep(MY_RESULT_CODE_1000);
-
-                    } catch (InterruptedException e) {
-                    }
 
                 }
             }
-        }).start();
+        });
+
 
     }
-
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            mSeekBar.setProgress(msg.what);
-        }
-    };
 
     private void playSongLocaltion() {
         uri = Uri.parse(arrList.get(mLocaltionSong).toString());
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-        mediaPlayer.seekTo(time);
-        mediaPlayer.start();
-//        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(MediaPlayer mediaPlayer) {
-//
-//            }
-//        });   TODO: để nhạc chạy bài tiếp theo khi hết nhạc
 
-        updateSong();
-
-    }
-
-
-    private void playSongLocaltion1() {
-        uri = Uri.parse(arrList.get(mLocaltionSong).toString());
-        mediaPlayer = new MediaPlayer();
         mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
         mediaPlayer.start();
-
         updateSong();
+
     }
 
     private void allTimeSong() {
@@ -201,16 +147,14 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
                 mTimeStart.setText(simpleDateFormat.format(mediaPlayer.getCurrentPosition()));
                 mSeekBar.setProgress(mediaPlayer.getCurrentPosition());
-                t = mediaPlayer.getCurrentPosition();
-                handler.postDelayed(this, MY_RESULT_CODE_5);
+                handler.postDelayed(this, 500);
             }
-        }, MY_RESULT_CODE_1);
+        }, 100);
 
 
     }
 
     private void updateSong() {
-
         MediaMetadataRetriever retriever = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1) {
             retriever = new MediaMetadataRetriever();
@@ -237,8 +181,8 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
                     if (mediaPlayer.isPlaying()) {
                         mediaPlayer.stop();
                     }
-                    playSongLocaltion1();
-
+                    playSongLocaltion();
+                    //mPrevious.setImageResource(R.drawable.ic_fab_play_btn_normal);
                     allTimeSong();
                     updateTime();
                 }
@@ -247,13 +191,13 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
             case R.id.pause_play:
                 if (mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
-                    mPlayStart.setBackgroundResource(R.drawable.ic_play_black);
+                    mPlayStart.setImageResource(R.drawable.ic_fab_play_btn_normal);
                 } else {
                     mediaPlayer.start();
-                    mPlayStart.setBackgroundResource(R.drawable.ic_media_pause_light);
 
                 }
-
+                playSongLocaltion();
+                // mPlayStart.setImageResource(R.drawable.ic_fab_play_btn_normal);
 
                 allTimeSong();
                 updateTime();
@@ -267,8 +211,8 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
                 if (mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
                 }
-                playSongLocaltion1();
-
+                playSongLocaltion();
+                // mNext.setImageResource(R.drawable.ic_fab_play_btn_normal);
                 allTimeSong();
                 updateTime();
                 break;
@@ -276,14 +220,6 @@ public class DetailSongRuningActivity extends AppCompatActivity implements View.
 
         }
     }
-
-    @Override
-    public void onBackPressed() {
-        Intent i = new Intent(DetailSongRuningActivity.this, MainActivity.class);
-        i.putExtra("time", t);
-        setResult(000, i);
-        if (mediaPlayer.isPlaying()) mediaPlayer.pause();
-        finish();
-        super.onBackPressed();
-    }
 }
+
+
