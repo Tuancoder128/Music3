@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 <item
-    android:id="@+id/popup_show"
-    android:title="Show"
+    android:id="@+id/popup_scan"
+    android:title="Scan"
     />
     <item
         android:id="@+id/popup_settup"

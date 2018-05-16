@@ -32,9 +32,9 @@ public class AdapterBaiHat extends BaseAdapter {
     private class ViewHolder{
         private TextView mSoThuTu;
         private TextView mTenBaHat;
-        //private TextView mTheLoai;
         private TextView mTime;
         private ImageView mOther;
+
 
     }
 
@@ -84,6 +84,7 @@ public class AdapterBaiHat extends BaseAdapter {
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         Toast.makeText(context,"You Clicked : " + item.getTitle(),Toast.LENGTH_SHORT).show();
+
                         return true;
                     }
                 });

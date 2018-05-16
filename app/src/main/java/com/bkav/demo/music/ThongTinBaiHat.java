@@ -20,6 +20,8 @@ public class ThongTinBaiHat {
         Thoigian = thoigian;
     }
 
+
+
     public String getTenBaiHat() {
         return TenBaiHat;
     }
