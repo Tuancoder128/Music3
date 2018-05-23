@@ -3,10 +3,15 @@ package com.bkav.demo.music;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.ScaleDrawable;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -21,6 +26,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -34,7 +40,7 @@ import java.util.ArrayList;
  * Created by vst on 22/04/2018.
  */
 
-public class FragmentDetails extends Fragment implements View.OnClickListener {
+public class FragmentDetails extends Fragment implements View.OnClickListener, MyBroastReceiver.IgetDataFromBroadCast {
     private ImageView mHinhDanhSach;
     private ImageView mPausePlay;
     private ImageView mLike;
@@ -53,43 +59,44 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
     private String mTenAlbumBack;
     private String mTenBaiHatBack;
     FragmentListSong mFragmentListSong;
-    private static final int MY_RESULT_CODE_1 = 500;
-    private static final int MY_RESULT_CODE_5 = 1000;
-    private static final int MY_RESULT_CODE_1000 = 10000;
+    private static final int MY_RESULT_CODE_SEND_MESSAGE = 1000;
     public boolean mboundService = false;
     public ServiceMusic mServiceMusic;
+    private Bitmap mBitmap;
+    private Handler mHandler;
+    private FrameLayout mFrameLayout;
+    private static final String BIT_MAP = "bitmap";
+    private static final String BACK_STACK_FRAGMENT_LIST_SONG = "back_fragmentListSong";
+    private static final String NAME_TITLE = "tenbaihat";
+    private static final String NAME_ARTIST = "tencasy";
+    private static final String NAME_ARTIST_ = "tenalbum";
+    private static final String DATA_BUNDLER = "dataBunder";
+    public static MyBroastReceiver.IgetDataFromBroadCast mIgetDataFromBroadCast;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                if (keyEvent.getAction() == KeyEvent.ACTION_UP && i == KeyEvent.KEYCODE_BACK) {
-                    Toast.makeText(mServiceMusic, "this is Fragment List", Toast.LENGTH_SHORT).show();
-                    mFragmentListSong = new FragmentListSong();
-                    FragmentManager fragmentManager = getFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.frame_main, mFragmentListSong);
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-                    return true;
+        getActivity().registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent != null) {
+                    mBundle = intent.getBundleExtra(DATA_BUNDLER);
+                    mTenAlbum.setText(mBundle.getString(NAME_TITLE));
+                    mTenBaiHat.setText(mBundle.getString(NAME_ARTIST_));
+                    getImageSong();
+                    managerSeekBar();
+                    allTimeSong();
                 }
-                return false;
 
             }
-        });
-
+        }, new IntentFilter(ServiceMusic.VALUE_DATA_INTENT));
     }
 
     @Nullable
@@ -119,18 +126,64 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
         mTimeAll = (TextView) view.findViewById(R.id.time_all);
         mSeekBar = (SeekBar) view.findViewById(R.id.seekbar);
 
-
         mBundle = getArguments();
-        mTenAlbum.setText(mBundle.getString("tenbaihat").toString());
-        mTenBaiHat.setText(mBundle.getString("tencasy").toString());
+        mTenAlbum.setText(mBundle.getString(NAME_TITLE).toString());
+        mTenBaiHat.setText(mBundle.getString(NAME_ARTIST).toString());
 
-
+        backFragment();
+        getBipMap();
         managerSeekBar();
-        allTimeSong();
+
+        mIgetDataFromBroadCast = this;
 
         return view;
+
     }
 
+
+    private void backFragment() {
+        mHinhDanhSach.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getFragmentManager().popBackStack(BACK_STACK_FRAGMENT_LIST_SONG, 1);
+            }
+        });
+    }
+
+    private void getBipMap() {
+        byte[] mBipmap = getArguments().getByteArray(BIT_MAP);
+        if (mBipmap != null) {
+            mBitmap = BitmapFactory.decodeByteArray(mBipmap, 0, mBipmap.length);
+            mHinhCaSy.setImageBitmap(mBitmap);
+        } else {
+            mHinhCaSy.setImageResource(R.drawable.bg_default_album_art);
+        }
+    }
+
+
+    public void getImageSong() {
+        MediaMetadataRetriever mGetImage = new MediaMetadataRetriever();
+        byte[] mRawArt;
+        mBitmap = null;
+        BitmapFactory.Options bfo = new BitmapFactory.Options();
+        mGetImage.setDataSource(mServiceMusic.mArrayListSong.get(mServiceMusic.mLocalSong));
+        mRawArt = mGetImage.getEmbeddedPicture();
+
+        if (null != mRawArt) {
+            mBitmap = BitmapFactory.decodeByteArray(mRawArt, 0, mRawArt.length, bfo);
+            mBundle.putByteArray(BIT_MAP, mRawArt);
+        }
+        if (mBitmap != null) {
+
+            mHinhCaSy.setImageBitmap(mBitmap);
+
+        } else {
+
+            mHinhCaSy.setImageResource(R.drawable.bg_default_album_art);
+        }
+
+
+    }
 
     private void updateNameSong() {
 
@@ -140,22 +193,22 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
             retriever.setDataSource(mServiceMusic.mArrayListSong.get(mServiceMusic.mLocalSong));
             mTenAlbumBack = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
             mTenBaiHatBack = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-            mTenBaiHat.setText(mTenBaiHatBack);
-            mTenAlbum.setText(mTenAlbumBack);
-            mHinhCaSy.setImageResource(R.drawable.anhtho);
-
+            mTenBaiHat.setText(mTenAlbumBack);
+            mTenAlbum.setText(mTenBaiHatBack);
 
         }
-
     }
 
     public void managerSeekBar() {
+        sendMessage();
+        timeStart();
+        allTimeSong();
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                // trả về giá trị của seekbar , vd như khi kéo thả seekbar
+                // ServiceMusic.mMediaPlayer.seekTo(i);
 
-                ServiceMusic.mMediaPlayer.seekTo(i);
-                mSeekBar.setProgress(i);
             }
 
             @Override
@@ -169,6 +222,11 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
                 ServiceMusic.mMediaPlayer.seekTo(seekBar.getProgress());
             }
         });
+
+
+    }
+
+    public void sendMessage() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -176,26 +234,35 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
                     try {
                         Message msg = new Message();
                         msg.what = ServiceMusic.mMediaPlayer.getCurrentPosition();
-                        handler.sendMessage(msg);
-                        Thread.sleep(MY_RESULT_CODE_1000);
+                        Log.d("AAA", String.valueOf(ServiceMusic.mMediaPlayer.getCurrentPosition()));
+                        mHandler.sendMessage(msg);
+                        Thread.sleep(MY_RESULT_CODE_SEND_MESSAGE);
                     } catch (InterruptedException e) {
                     }
                 }
             }
         }).start();
-        updateTime();
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                mSeekBar.setProgress(msg.what);
+            }
+        };
+
     }
 
+    private void timeStart() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+                mTimeStart.setText(simpleDateFormat.format(ServiceMusic.mMediaPlayer.getCurrentPosition()));
+                mSeekBar.setProgress(ServiceMusic.mMediaPlayer.getCurrentPosition());
+                mHandler.postDelayed(this, MY_RESULT_CODE_SEND_MESSAGE);
 
-
-
-
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            mSeekBar.setProgress(msg.what);
-        }
-    };
+            }
+        }, MY_RESULT_CODE_SEND_MESSAGE);
+    }
 
     private void allTimeSong() {
 
@@ -207,36 +274,29 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
     }
 
 
-    private void updateTime() {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-                mTimeStart.setText(simpleDateFormat.format(ServiceMusic.mMediaPlayer.getCurrentPosition()));
-                mSeekBar.setProgress(ServiceMusic.mMediaPlayer.getCurrentPosition());
-                handler.postDelayed(this, MY_RESULT_CODE_5);
-
-            }
-        }, MY_RESULT_CODE_1);
-
-
-    }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.previous:
                 mServiceMusic.previousSong();
+                mPlayStart.setImageResource(R.drawable.ic_media_pause_dark);
+                managerSeekBar();
                 updateNameSong();
+                getImageSong();
+
                 break;
+
 
             case R.id.next:
                 mServiceMusic.nextSong();
+                mPlayStart.setImageResource(R.drawable.ic_media_pause_dark);
+                managerSeekBar();
                 updateNameSong();
+                getImageSong();
+
+
                 break;
             case R.id.pause_play:
-                // mServiceMusic.clickPausePlayMusic();
                 if (ServiceMusic.mMediaPlayer.isPlaying()) {
                     ServiceMusic.mMediaPlayer.pause();
                     mPlayStart.setImageResource(R.drawable.ic_fab_play_btn_normal);
@@ -244,9 +304,10 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
                     ServiceMusic.mMediaPlayer.start();
                     mPlayStart.setImageResource(R.drawable.ic_media_pause_dark);
                 }
-                updateNameSong();
                 break;
+
         }
+
 
     }
 
@@ -270,7 +331,29 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
     };
 
 
+    @Override
+    public void sendDataFromBroadCast(Bundle mBundle) {
+
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

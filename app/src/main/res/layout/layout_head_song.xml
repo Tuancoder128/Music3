@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
         <ImageView
             android:id="@+id/hinh_casy"
-            android:background="@drawable/anhtho"
+            android:background="@drawable/bg_default_album_art"
             android:layout_width="80dp"
             android:layout_height="80dp" />
         <LinearLayout
@@ -24,7 +24,7 @@
             android:layout_height="180dp">
             <TextView
                 android:textColor="#181717"
-                android:textSize="20sp"
+                android:textSize="15sp"
                 android:id="@+id/tencasy"
                 android:text="Ten ca sy"
                 android:layout_width="180dp"

@@ -22,6 +22,7 @@ public class AdapterBaiHat extends BaseAdapter {
     private Context context;
     private int resource;
     private ArrayList<ThongTinBaiHat> arrayList;
+    private static final String YOU_CLICKTED = "You Clicked ";
 
     public AdapterBaiHat(Context context, int resource, ArrayList<ThongTinBaiHat> arrayList) {
         this.context = context;
@@ -83,7 +84,7 @@ public class AdapterBaiHat extends BaseAdapter {
 
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        Toast.makeText(context,"You Clicked : " + item.getTitle(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context,YOU_CLICKTED + item.getTitle(),Toast.LENGTH_SHORT).show();
 
                         return true;
                     }

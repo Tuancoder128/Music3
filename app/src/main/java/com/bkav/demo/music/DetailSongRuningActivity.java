@@ -33,20 +33,6 @@ public class DetailSongRuningActivity extends AppCompatActivity {
     public ImageView mHinhCaSy;
     public TextView mTenCaSy;
     public TextView mTenBaiHat;
-    private TextView mTimeStart;
-    private TextView mTimeAll;
-    private SeekBar mSeekBar;
-    private Intent intent;
-    public Bundle bundle;
-    public int mLocaltionSong;
-    public ArrayList<String> arrList;
-    public Uri uri;
-    public MediaPlayer mediaPlayer;
-    private int mTime;
-    private static final int MY_RESULT_CODE_1 = 100;
-    private static final int MY_RESULT_CODE_5 = 500;
-    private static final int MY_RESULT_CODE_1000 = 1000;
-    private static int TIME_START = 0;
     public boolean iboundService = false;
     public ServiceMusic mserviceMusic;
 
@@ -73,8 +59,6 @@ public class DetailSongRuningActivity extends AppCompatActivity {
 
         mTenCaSy = (TextView) findViewById(R.id.tencasy);
         mTenBaiHat = (TextView) findViewById(R.id.tenbaihat);
-        mTimeStart = (TextView) findViewById(R.id.time_start);
-        mTimeAll = (TextView) findViewById(R.id.time_all);
 
 
     }

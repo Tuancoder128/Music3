@@ -2,6 +2,7 @@ package com.bkav.demo.music;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
@@ -30,24 +31,35 @@ import java.util.Random;
  */
 
 public class ServiceMusic extends Service {
-
-
     // Bkav QuangLH Review 20180507: khong de cac View duoi service
     // --> Dao tao anh em ve BroadcastReceiver
-    //
     // Bkav QuangLH Review 20180507: khong de public khong can thiet.
 
     private final IBinder mBinder = new MyBinder();
     public ArrayList<String> mArrayListSong;
     public Bundle mBundler;
     public int mLocalSong;
-    private int mLocalSongRuning;
+    public String mLocalSongRuning;
     public static MediaPlayer mMediaPlayer;
     private Uri mUriSong;
+    private MyBroastReceiver mMyBroastReceiver;
+    private Intent mIntentBroadCast;
+    public static final String VALUE_DATA_INTENT = "ValueDataIntent";
+    private static final String NAME_TITLE = "tenbaihat";
+    private static final String NAME_ARTIST = "tenalbum";
+    private static final String DATA_BUNDLER = "dataBunder";
+    private IntentFilter mIntentFilter;
+    public String mTenBaiHat;
+    public String mTenAlbum;
 
 
     @Override
     public void onCreate() {
+
+        mMyBroastReceiver = new MyBroastReceiver();
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(VALUE_DATA_INTENT);
+        registerReceiver(mMyBroastReceiver, mIntentFilter);
         super.onCreate();
 
 
@@ -76,7 +88,7 @@ public class ServiceMusic extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        unregisterReceiver(mMyBroastReceiver);
     }
 
     public void playMusic(String mLocalSong) {
@@ -94,23 +106,17 @@ public class ServiceMusic extends Service {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void getLocaltionSong(int local) {
-        mLocalSong = local;
+        autoPLayNextSong();
 
     }
 
-    public void getArrayListSong(ArrayList<String> arraylistbh) {
-        mArrayListSong = arraylistbh;
+    public void getLocaltionSong(int mLocal) {
+        mLocalSong = mLocal;
+
     }
 
-    public void clickPausePlayMusic() {
-        if (mMediaPlayer.isPlaying()) {
-            mMediaPlayer.pause();
-        } else {
-            mMediaPlayer.start();
-        }
+    public void getArrayListSong(ArrayList<String> mArrayList) {
+        mArrayListSong = mArrayList;
     }
 
     public void previousSong() {
@@ -120,11 +126,12 @@ public class ServiceMusic extends Service {
         } else {
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.stop();
+                mMediaPlayer.release();
             }
             playSongLocaltion();
+            autoPLayNextSong();
+
         }
-
-
     }
 
     public void nextSong() {
@@ -134,28 +141,67 @@ public class ServiceMusic extends Service {
         }
         if (mMediaPlayer.isPlaying()) {
             mMediaPlayer.stop();
+            mMediaPlayer.release();
         }
         playSongLocaltion();
+        autoPLayNextSong();
     }
 
-    public void repeatSong() {
-
-    }
 
     public void playSongLocaltion() {
         mUriSong = Uri.parse(mArrayListSong.get(mLocalSong).toString());
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer = MediaPlayer.create(getApplicationContext(), mUriSong);
         mMediaPlayer.start();
+        // TODO : get image and time from song is running
 
+        autoPLayNextSong();
     }
+
+    public void autoPLayNextSong() {
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mLocalSong = mLocalSong + 1;
+                getNameSong();
+                //TODO send progerss and all time song
+                mIntentBroadCast = new Intent();
+                mBundler = new Bundle();
+                mBundler.putString(NAME_ARTIST, mTenAlbum);
+                mBundler.putString(NAME_TITLE, mTenBaiHat);
+                mIntentBroadCast.putExtra(DATA_BUNDLER,mBundler);
+                mIntentBroadCast.setAction(VALUE_DATA_INTENT);
+                sendBroadcast(mIntentBroadCast);
+                if (mLocalSong > mArrayListSong.size() - 1) {
+                    mLocalSong = 0;
+                    playSongLocaltion();
+                } else {
+                    playSongLocaltion();
+                }
+
+            }
+        });
+    }
+
+    private void getNameSong() {
+
+        MediaMetadataRetriever retriever = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1) {
+            retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(mArrayListSong.get(mLocalSong));
+            mTenAlbum = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+            mTenBaiHat = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+
+
+        }
+    }
+
 
     public class MyBinder extends Binder {
         ServiceMusic getService() {
             return ServiceMusic.this;
         }
     }
-
 }
 
 

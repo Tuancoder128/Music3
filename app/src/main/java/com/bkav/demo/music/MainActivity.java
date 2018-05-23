@@ -14,6 +14,7 @@ import android.os.Bundle;
 
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -27,6 +28,13 @@ public class MainActivity extends AppCompatActivity implements FragmentListSong.
     private Toolbar toolbar;
     private Bundle mBundle;
     public FragmentDetails mFragmentDetails;
+    private static final String NOTIFICATION = "Bạn hãy nhập vào tên bài hát hoặc tên ca sỹ";
+    private static final String NAME_TITLE = "tenbaihat";
+    private static final String NAME_ARTIST = "tencasy";
+    private static final String ARRAY_LIST_SONG = "mangbaihat";
+    private static final String BIT_MAP = "bitmap";
+    private static final String BACK_STACK_FRAGMENT_LIST_SONG = "back_fragmentListSong";
+    private static final String BACK_STACK_FRAGMENT_DETAILS = "back_fragmentDetails";
 
 
     @Override
@@ -39,8 +47,9 @@ public class MainActivity extends AppCompatActivity implements FragmentListSong.
 
         mFragmentManager = getFragmentManager();
         mFragmentTransaction = mFragmentManager.beginTransaction();
-        FragmentListSong fragmentListSong = new FragmentListSong();
-        mFragmentTransaction.replace(R.id.frame_main, fragmentListSong);
+        FragmentListSong mFragmentListSong = new FragmentListSong();
+        mFragmentTransaction.replace(R.id.frame_main, mFragmentListSong);
+        mFragmentTransaction.addToBackStack(BACK_STACK_FRAGMENT_LIST_SONG);
         mFragmentTransaction.commit();
 
 
@@ -70,8 +79,8 @@ public class MainActivity extends AppCompatActivity implements FragmentListSong.
                             Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     }
                 } else {
-                    Toast.makeText(this, " No permission grandted", Toast.LENGTH_SHORT).show();
                     finish();
+
                 }
             }
         }
@@ -92,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements FragmentListSong.
         int id = item.getItemId();
         switch (id) {
             case R.id.item_search:
-                Toast.makeText(this, "Bạn hãy nhập vào tên bài hát hoặc tên ca sỹ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, NOTIFICATION, Toast.LENGTH_SHORT).show();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -103,9 +112,12 @@ public class MainActivity extends AppCompatActivity implements FragmentListSong.
     public void sendData(Bundle dataBundler) {
 
         mBundle = new Bundle();
-        mBundle.putString("tenbaihat",dataBundler.getString("tenbaihat"));
-        mBundle.putString("tencasy",dataBundler.getString("tencasy"));
-        mBundle.putString("mangbaihat",dataBundler.getString("mangbaihat"));
+        mBundle.putString(NAME_TITLE, dataBundler.getString(NAME_TITLE));
+        mBundle.putString(NAME_ARTIST, dataBundler.getString(NAME_ARTIST));
+        mBundle.putString(ARRAY_LIST_SONG, dataBundler.getString(ARRAY_LIST_SONG));
+
+        mBundle.putByteArray(BIT_MAP, dataBundler.getByteArray(BIT_MAP));
+        Log.d("AAA", String.valueOf(dataBundler.getByteArray(BIT_MAP)));
         mFragmentDetails = new FragmentDetails();
         mFragmentDetails.setArguments(mBundle);
 
@@ -113,8 +125,9 @@ public class MainActivity extends AppCompatActivity implements FragmentListSong.
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_main, mFragmentDetails);
-        fragmentTransaction.addToBackStack(null);
+        mFragmentTransaction.addToBackStack(BACK_STACK_FRAGMENT_DETAILS);
         fragmentTransaction.commit();
+
     }
 
 
