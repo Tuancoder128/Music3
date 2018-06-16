@@ -26,6 +26,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -40,7 +42,7 @@ import java.util.ArrayList;
  * Created by vst on 22/04/2018.
  */
 
-public class FragmentDetails extends Fragment implements View.OnClickListener, MyBroastReceiver.IgetDataFromBroadCast {
+public class FragmentDetails extends Fragment implements View.OnClickListener {
     private ImageView mHinhDanhSach;
     private ImageView mPausePlay;
     private ImageView mLike;
@@ -65,18 +67,27 @@ public class FragmentDetails extends Fragment implements View.OnClickListener, M
     private Bitmap mBitmap;
     private Handler mHandler;
     private FrameLayout mFrameLayout;
+    private android.app.FragmentManager mFragmentManager;
+    private FragmentTransaction mFragmentTransaction;
+    public Bundle mBundler;
+    private MyBroastReceiver mMyBroastReceiver;
+    private Intent mIntentBroadCast;
+    public static final String VALUE_DATA_INTENT = "ValueDataIntent";
     private static final String BIT_MAP = "bitmap";
     private static final String BACK_STACK_FRAGMENT_LIST_SONG = "back_fragmentListSong";
     private static final String NAME_TITLE = "tenbaihat";
     private static final String NAME_ARTIST = "tencasy";
     private static final String NAME_ARTIST_ = "tenalbum";
     private static final String DATA_BUNDLER = "dataBunder";
-    public static MyBroastReceiver.IgetDataFromBroadCast mIgetDataFromBroadCast;
-
+    private IntentFilter mIntentFilter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mMyBroastReceiver = new MyBroastReceiver();
+        mIntentFilter = new IntentFilter();
+
     }
 
     @Override
@@ -93,10 +104,49 @@ public class FragmentDetails extends Fragment implements View.OnClickListener, M
                     getImageSong();
                     managerSeekBar();
                     allTimeSong();
+                    zoomText();
                 }
 
             }
         }, new IntentFilter(ServiceMusic.VALUE_DATA_INTENT));
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                    updateNameSong();
+                    mIntentBroadCast = new Intent();
+                    mBundler = new Bundle();
+                    mBundler.putString(NAME_ARTIST_, mTenAlbumBack);
+                    mBundler.putString(NAME_TITLE, mTenBaiHatBack);
+                    mIntentBroadCast.putExtra(DATA_BUNDLER, mBundler);
+                    mIntentBroadCast.setAction(VALUE_DATA_INTENT);
+                    getActivity().sendBroadcast(mIntentBroadCast);
+                    Toast.makeText(mServiceMusic, "YOU CLICKED FRAGMENT", Toast.LENGTH_SHORT).show();
+                    mFragmentListSong = new FragmentListSong();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_main, mFragmentListSong);
+                    fragmentTransaction.commit();
+                    return true;
+                }
+
+                return false;
+            }
+        });
     }
 
     @Nullable
@@ -133,8 +183,7 @@ public class FragmentDetails extends Fragment implements View.OnClickListener, M
         backFragment();
         getBipMap();
         managerSeekBar();
-
-        mIgetDataFromBroadCast = this;
+        zoomText();
 
         return view;
 
@@ -145,7 +194,7 @@ public class FragmentDetails extends Fragment implements View.OnClickListener, M
         mHinhDanhSach.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getFragmentManager().popBackStack(BACK_STACK_FRAGMENT_LIST_SONG, 1);
+
             }
         });
     }
@@ -195,7 +244,13 @@ public class FragmentDetails extends Fragment implements View.OnClickListener, M
             mTenBaiHatBack = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
             mTenBaiHat.setText(mTenAlbumBack);
             mTenAlbum.setText(mTenBaiHatBack);
+            zoomText();
 
+        }
+       else {
+
+            mTenBaiHat.setText("<unknow>");
+            mTenAlbum.setText("<unknow>");
         }
     }
 
@@ -273,6 +328,14 @@ public class FragmentDetails extends Fragment implements View.OnClickListener, M
 
     }
 
+    public void zoomText(){
+        Animation mZoom = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),R.anim.zoom);
+        mZoom.reset();
+        mTenAlbum.clearAnimation();
+        mTenBaiHat.clearAnimation();
+        mTenAlbum.startAnimation(mZoom);
+        mTenBaiHat.startAnimation(mZoom);
+    }
 
     @Override
     public void onClick(View view) {
@@ -283,6 +346,7 @@ public class FragmentDetails extends Fragment implements View.OnClickListener, M
                 managerSeekBar();
                 updateNameSong();
                 getImageSong();
+
 
                 break;
 
@@ -330,11 +394,6 @@ public class FragmentDetails extends Fragment implements View.OnClickListener, M
         }
     };
 
-
-    @Override
-    public void sendDataFromBroadCast(Bundle mBundle) {
-
-    }
 }
 
 

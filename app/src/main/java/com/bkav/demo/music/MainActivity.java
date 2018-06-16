@@ -49,9 +49,15 @@ public class MainActivity extends AppCompatActivity implements FragmentListSong.
         mFragmentTransaction = mFragmentManager.beginTransaction();
         FragmentListSong mFragmentListSong = new FragmentListSong();
         mFragmentTransaction.replace(R.id.frame_main, mFragmentListSong);
-        mFragmentTransaction.addToBackStack(BACK_STACK_FRAGMENT_LIST_SONG);
+        mFragmentTransaction.addToBackStack(null);
         mFragmentTransaction.commit();
 
+        checkPermission();
+
+
+    }
+
+    public void checkPermission() {
 
         if (ContextCompat.checkSelfPermission(MainActivity.this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -67,8 +73,8 @@ public class MainActivity extends AppCompatActivity implements FragmentListSong.
             }
 
         }
-    }
 
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -121,11 +127,10 @@ public class MainActivity extends AppCompatActivity implements FragmentListSong.
         mFragmentDetails = new FragmentDetails();
         mFragmentDetails.setArguments(mBundle);
 
-
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_main, mFragmentDetails);
-        mFragmentTransaction.addToBackStack(BACK_STACK_FRAGMENT_DETAILS);
+        mFragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
     }

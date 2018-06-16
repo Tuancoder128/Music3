@@ -16,7 +16,7 @@ import java.util.ArrayList;
 /**
  * Created by vst on 10/04/2018.
  */
-// Bkav QuangLH review 20180415: ham nao da override thi can code cho dung. VD getItemId, getItem
+
 public class AdapterBaiHat extends BaseAdapter {
 
     private Context context;
@@ -64,9 +64,9 @@ public class AdapterBaiHat extends BaseAdapter {
             viewHolder.mSoThuTu = view.findViewById(R.id.number);
             viewHolder.mTime = view.findViewById(R.id.time);
             viewHolder.mTenBaHat = view.findViewById(R.id.name_song);
-            //viewHolder.mTheLoai  = view.findViewById(R.id.detail);
             viewHolder.mOther = view.findViewById(R.id.other);
             view.setTag(viewHolder);
+
         }else {
             viewHolder = (ViewHolder) view.getTag();
         }
@@ -74,7 +74,6 @@ public class AdapterBaiHat extends BaseAdapter {
 
         viewHolder.mTenBaHat.setText(thongTinBaiHat.getTenBaiHat());
         viewHolder.mTime.setText(thongTinBaiHat.getThoigian());
-        //viewHolder.mTheLoai.setText(thongTinBaiHat.getTheloai());
         viewHolder.mSoThuTu.setText("" + thongTinBaiHat.getSothutu());
         viewHolder.mOther.setOnClickListener(new View.OnClickListener() {
             @Override

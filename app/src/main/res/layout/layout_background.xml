@@ -17,9 +17,13 @@
         android:background="#fff">
 
         <ImageView
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
             android:id="@+id/hinh_album"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:background="@drawable/bg_default_album_art" />
 
 
@@ -35,7 +39,7 @@
 
 
             <TextView
-
+                android:textStyle="italic"
                 android:layout_marginTop="10dp"
                 android:textColor="#181717"
                 android:id="@+id/click_tenbaihat"
@@ -45,6 +49,7 @@
                 android:textSize="15sp" />
 
             <TextView
+                android:textStyle="italic"
                 android:textColor="#282826"
                 android:layout_marginTop="5dp"
                 android:id="@+id/click_casy"

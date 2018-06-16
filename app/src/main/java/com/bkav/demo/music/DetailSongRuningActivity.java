@@ -56,7 +56,6 @@ public class DetailSongRuningActivity extends AppCompatActivity {
         mPlayStart = (ImageView) findViewById(R.id.pause_play);
         mNext = (ImageView) findViewById(R.id.next);
         mHinhCaSy = (ImageView) findViewById(R.id.hinh_casy);
-
         mTenCaSy = (TextView) findViewById(R.id.tencasy);
         mTenBaiHat = (TextView) findViewById(R.id.tenbaihat);
 

@@ -31,6 +31,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -38,18 +40,19 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toolbar;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-
 import java.util.ArrayList;
+import android.graphics.Color;
+
+
 
 
 /**
  * Created by vst on 22/04/2018.
  */
 
-public class FragmentListSong extends Fragment implements MyBroastReceiver.IgetDataFromBroadCast{
+public class FragmentListSong extends Fragment {
 
 
     public ArrayList<ThongTinBaiHat> arrayList;
@@ -75,17 +78,14 @@ public class FragmentListSong extends Fragment implements MyBroastReceiver.IgetD
     public ServiceMusic mServiceMusic;
     private SendDataToFragmentDetails mSendDataToFragmentDetails;
     public String mLocal;
-    Bitmap mBitmap;
+    public Bitmap mBitmap;
     private static final String NAME_TITLE = "tenbaihat";
     private static final String NAME_ARTIST = "tencasy";
     private static final String NAME_ARTIST_ = "tenalbum";
     private static final String ARRAY_LIST_SONG = "arrayListSong";
-    private static final String LOCALTION= "localSong";
+    private static final String LOCALTION = "localSong";
     private static final String BIT_MAP = "bitmap";
     private static final String DATA_BUNDLER = "dataBunder";
-
-
-
 
 
     @Override
@@ -108,17 +108,20 @@ public class FragmentListSong extends Fragment implements MyBroastReceiver.IgetD
     public void onAttach(Context context) {
         super.onAttach(context);
         mSendDataToFragmentDetails = (SendDataToFragmentDetails) context;
-      getActivity().registerReceiver(new BroadcastReceiver() {
-          @Override
-          public void onReceive(Context context, Intent intent) {
-              if(intent != null){
-                  mBundle = intent.getBundleExtra(DATA_BUNDLER);
-                  mCLickTenBaiHat.setText(mBundle.getString(NAME_TITLE));
-                  mCLickCasy.setText(mBundle.getString(NAME_ARTIST_));
-                  getImageSong();
-              }
-          }
-      },new IntentFilter(ServiceMusic.VALUE_DATA_INTENT));
+
+        getActivity().registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent != null) {
+                    mBundle = intent.getBundleExtra(DATA_BUNDLER);
+                    mCLickTenBaiHat.setText(mBundle.getString(NAME_TITLE));
+                    Log.d("VUVANTUAN", String.valueOf(mBundle.getString(NAME_TITLE)));
+                    mCLickCasy.setText(mBundle.getString(NAME_ARTIST_));
+                    Log.d("VUVANTUAN", String.valueOf(mBundle.getString(NAME_ARTIST_)));
+                    getImageSong();
+                }
+            }
+        }, new IntentFilter(ServiceMusic.VALUE_DATA_INTENT));
     }
 
     @Override
@@ -127,12 +130,6 @@ public class FragmentListSong extends Fragment implements MyBroastReceiver.IgetD
         baiHatAdapter.notifyDataSetChanged();
 
 
-    }
-
-    @Override
-    public void sendDataFromBroadCast(Bundle mBundle) {
-        mCLickTenBaiHat.setText(mBundle.getString(NAME_TITLE));
-        mCLickCasy.setText(mBundle.getString(NAME_ARTIST));
     }
 
 
@@ -216,13 +213,14 @@ public class FragmentListSong extends Fragment implements MyBroastReceiver.IgetD
         activity.setSupportActionBar(mToolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
-        mTime = (TextView) view.findViewById(R.id.time);
+
         mNumber = (TextView) view.findViewById(R.id.number);
         mListBaiHat = (ListView) view.findViewById(R.id.list_album);
         mTenBaiHat = (TextView) view.findViewById(R.id.tenbaihat);
         mCLickTenBaiHat = (TextView) view.findViewById(R.id.click_tenbaihat);
         mCLickCasy = (TextView) view.findViewById(R.id.click_casy);
         mNameSong = (TextView) view.findViewById(R.id.name_song);
+        mTime = (TextView) view.findViewById(R.id.time);
         mClickPasePlay = (Button) view.findViewById(R.id.click_pause_play_main);
         mMoveSong = (RelativeLayout) view.findViewById(R.id.move_song);
 
@@ -237,19 +235,59 @@ public class FragmentListSong extends Fragment implements MyBroastReceiver.IgetD
         mClickPasePlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if (ServiceMusic.mMediaPlayer.isPlaying()) {
-                    ServiceMusic.mMediaPlayer.pause();
+                if (ServiceMusic.mMediaPlayer == null) {
                     mClickPasePlay.setBackgroundResource(R.drawable.ic_play_black);
                 } else {
-                    ServiceMusic.mMediaPlayer.start();
-                    mClickPasePlay.setBackgroundResource(R.drawable.ic_media_pause_light);
+                    if (ServiceMusic.mMediaPlayer.isPlaying()) {
+                        ServiceMusic.mMediaPlayer.pause();
+                        mClickPasePlay.setBackgroundResource(R.drawable.ic_play_black);
+                    } else {
+                        ServiceMusic.mMediaPlayer.start();
+                        mClickPasePlay.setBackgroundResource(R.drawable.ic_media_pause_light);
+                    }
                 }
+
 
             }
         });
 
         return view;
+    }
+    public void animationText(){
+        TranslateAnimation animation = new TranslateAnimation(500.0f, 0.0f, 0.0f, 0.0f);
+        animation.setDuration(800);
+        animation.setRepeatCount(0);
+        animation.setFillAfter(false);
+        mCLickTenBaiHat .startAnimation(animation);
+        mCLickCasy.startAnimation(animation);
+
+    }
+
+    public void setItemSelected(View view){
+        View rowView = view;
+        TextView mNameSong = (TextView)rowView.findViewById(R.id.name_song);
+        TextView mTime= (TextView)rowView.findViewById(R.id.time);
+        TextView mNumber= (TextView)rowView.findViewById(R.id.number);
+        mNameSong.setTextColor(Color.RED);
+        mTime.setTextColor(Color.RED);
+        mNumber.setTextColor(Color.RED);
+       // mNumber.setBackgroundResource(R.drawable.music_note_small);
+    }
+
+    public void setItemNormal()
+    {
+        for (int i=0; i< mListBaiHat.getChildCount(); i++)
+        {
+            View v = mListBaiHat.getChildAt(i);
+            TextView mTime= (TextView)v.findViewById(R.id.time);
+            TextView mNumber= (TextView)v.findViewById(R.id.number);
+            TextView mNameSong = ((TextView)v.findViewById(R.id.name_song));
+            mNameSong.setTextColor(Color.BLACK);
+            mTime.setTextColor(Color.BLACK);
+            mNumber.setTextColor(Color.BLACK);
+
+
+        }
     }
 
     public void clickSong() {
@@ -261,16 +299,22 @@ public class FragmentListSong extends Fragment implements MyBroastReceiver.IgetD
                 mClickPasePlay.setBackgroundResource(R.drawable.ic_media_pause_light);
                 String mLocaltion = mPath.get(i);
 
-
+                mCLickTenBaiHat.setTextColor(Color.RED);
+                mCLickCasy.setTextColor(Color.RED);
                 mCLickTenBaiHat.setText(arrayList.get(i).getTenBaiHat());
                 mCLickCasy.setText(arrayList.get(i).getTheloai());
+
+                setItemNormal();
+                View rowView = view;
+                setItemSelected(rowView);
+                animationText();
 
                 String tenbaihat = arrayList.get(i).getTenBaiHat();
                 String tencasy = arrayList.get(i).getTheloai();
 
                 mBundle = new Bundle();
                 mBundle.putString(NAME_TITLE, tenbaihat);
-                mBundle.putString(NAME_ARTIST , tencasy);
+                mBundle.putString(NAME_ARTIST, tencasy);
                 mBundle.putStringArrayList(ARRAY_LIST_SONG, mPath);
                 mBundle.putString(LOCALTION, mLocal);
 

@@ -31,10 +31,6 @@ import java.util.Random;
  */
 
 public class ServiceMusic extends Service {
-    // Bkav QuangLH Review 20180507: khong de cac View duoi service
-    // --> Dao tao anh em ve BroadcastReceiver
-    // Bkav QuangLH Review 20180507: khong de public khong can thiet.
-
     private final IBinder mBinder = new MyBinder();
     public ArrayList<String> mArrayListSong;
     public Bundle mBundler;
@@ -43,7 +39,7 @@ public class ServiceMusic extends Service {
     public static MediaPlayer mMediaPlayer;
     private Uri mUriSong;
     private MyBroastReceiver mMyBroastReceiver;
-    private Intent mIntentBroadCast;
+    public Intent mIntentBroadCast;
     public static final String VALUE_DATA_INTENT = "ValueDataIntent";
     private static final String NAME_TITLE = "tenbaihat";
     private static final String NAME_ARTIST = "tenalbum";
@@ -56,21 +52,13 @@ public class ServiceMusic extends Service {
     @Override
     public void onCreate() {
 
-        mMyBroastReceiver = new MyBroastReceiver();
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(VALUE_DATA_INTENT);
-        registerReceiver(mMyBroastReceiver, mIntentFilter);
         super.onCreate();
-
-
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         return START_NOT_STICKY;
-
-
     }
 
     @Nullable
@@ -164,12 +152,11 @@ public class ServiceMusic extends Service {
             public void onCompletion(MediaPlayer mediaPlayer) {
                 mLocalSong = mLocalSong + 1;
                 getNameSong();
-                //TODO send progerss and all time song
                 mIntentBroadCast = new Intent();
                 mBundler = new Bundle();
                 mBundler.putString(NAME_ARTIST, mTenAlbum);
                 mBundler.putString(NAME_TITLE, mTenBaiHat);
-                mIntentBroadCast.putExtra(DATA_BUNDLER,mBundler);
+                mIntentBroadCast.putExtra(DATA_BUNDLER, mBundler);
                 mIntentBroadCast.setAction(VALUE_DATA_INTENT);
                 sendBroadcast(mIntentBroadCast);
                 if (mLocalSong > mArrayListSong.size() - 1) {
@@ -191,8 +178,6 @@ public class ServiceMusic extends Service {
             retriever.setDataSource(mArrayListSong.get(mLocalSong));
             mTenAlbum = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
             mTenBaiHat = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-
-
         }
     }
 
