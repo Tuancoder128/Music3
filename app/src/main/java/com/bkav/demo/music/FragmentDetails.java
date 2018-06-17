@@ -157,15 +157,11 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
 
         mHinhDanhSach = (ImageView) view.findViewById(R.id.danhsach);
         mPausePlay = (ImageView) view.findViewById(R.id.pause_play);
-        mLike = (ImageView) view.findViewById(R.id.like);
-        mDisLike = (ImageView) view.findViewById(R.id.dis_like);
         mPrevious = (ImageView) view.findViewById(R.id.previous);
         mPlayStart = (ImageView) view.findViewById(R.id.pause_play);
         mNext = (ImageView) view.findViewById(R.id.next);
         mHinhCaSy = (ImageView) view.findViewById(R.id.hinh_casy);
 
-        mLike.setOnClickListener(this);
-        mDisLike.setOnClickListener(this);
         mPrevious.setOnClickListener(this);
         mPlayStart.setOnClickListener(this);
         mNext.setOnClickListener(this);
@@ -179,7 +175,7 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
         mBundle = getArguments();
         mTenAlbum.setText(mBundle.getString(NAME_TITLE).toString());
         mTenBaiHat.setText(mBundle.getString(NAME_ARTIST).toString());
-
+        mPlayStart.setImageResource(R.drawable.ic_media_pause_light);
         backFragment();
         getBipMap();
         managerSeekBar();
@@ -342,7 +338,7 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.previous:
                 mServiceMusic.previousSong();
-                mPlayStart.setImageResource(R.drawable.ic_media_pause_dark);
+                mPlayStart.setImageResource(R.drawable.ic_media_pause_light);
                 managerSeekBar();
                 updateNameSong();
                 getImageSong();
@@ -353,7 +349,7 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
 
             case R.id.next:
                 mServiceMusic.nextSong();
-                mPlayStart.setImageResource(R.drawable.ic_media_pause_dark);
+                mPlayStart.setImageResource(R.drawable.ic_media_pause_light);
                 managerSeekBar();
                 updateNameSong();
                 getImageSong();
@@ -363,10 +359,10 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
             case R.id.pause_play:
                 if (ServiceMusic.mMediaPlayer.isPlaying()) {
                     ServiceMusic.mMediaPlayer.pause();
-                    mPlayStart.setImageResource(R.drawable.ic_fab_play_btn_normal);
+                    mPlayStart.setImageResource(R.drawable.ic_play_black);
                 } else {
                     ServiceMusic.mMediaPlayer.start();
-                    mPlayStart.setImageResource(R.drawable.ic_media_pause_dark);
+                    mPlayStart.setImageResource(R.drawable.ic_media_pause_light);
                 }
                 break;
 

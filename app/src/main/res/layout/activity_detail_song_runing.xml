@@ -5,12 +5,9 @@
     android:id="@+id/bacground_details"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/music_bgr"
     tools:context="com.bkav.demo.music.DetailSongRuningActivity">
 
     <include layout="@layout/layout_head_song" />
-
-    <include layout="@layout/layout_repeat" />
 
     <include
         android:id="@+id/includebottom"

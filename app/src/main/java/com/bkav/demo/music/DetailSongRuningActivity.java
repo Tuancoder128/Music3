@@ -50,9 +50,6 @@ public class DetailSongRuningActivity extends AppCompatActivity {
     private void initView() {
         mHinhDanhSach = (ImageView) findViewById(R.id.danhsach);
         mPopupMenu = (ImageView) findViewById(R.id.popup_song);
-        mLike = (ImageView) findViewById(R.id.like);
-        mDisLike = (ImageView) findViewById(R.id.dis_like);
-        mPrevious = (ImageView) findViewById(R.id.previous);
         mPlayStart = (ImageView) findViewById(R.id.pause_play);
         mNext = (ImageView) findViewById(R.id.next);
         mHinhCaSy = (ImageView) findViewById(R.id.hinh_casy);
