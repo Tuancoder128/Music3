@@ -167,7 +167,6 @@ public class ServiceMusic extends Service {
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-
                 mLocalSong = mLocalSong + 1;
                 playSongLocaltion();
                 getNameSong();
@@ -187,7 +186,6 @@ public class ServiceMusic extends Service {
                 sendBroadcast(mIntentBroadCast);
                 sendBroadcast(mIntentBroadCastSuffle);
                 sendBroadcast(mIntentBroadCastRepeat);
-
 
             }
         });

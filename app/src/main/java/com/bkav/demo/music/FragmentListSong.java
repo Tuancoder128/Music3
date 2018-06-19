@@ -326,6 +326,7 @@ public class FragmentListSong extends Fragment {
                 mServiceMusic.getLocaltionSong(i);
                 mServiceMusic.getArrayListSong(mPath);
                 getImageSong();
+
             }
         });
     }
