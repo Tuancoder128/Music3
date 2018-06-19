@@ -35,18 +35,20 @@ public class ServiceMusic extends Service {
     public ArrayList<String> mArrayListSong;
     public Bundle mBundler;
     public int mLocalSong;
-    public String mLocalSongRuning;
     public static MediaPlayer mMediaPlayer;
     private Uri mUriSong;
-    private MyBroastReceiver mMyBroastReceiver;
     public Intent mIntentBroadCast;
+    public Intent mIntentBroadCastSuffle;
+    public Intent mIntentBroadCastRepeat;
     public static final String VALUE_DATA_INTENT = "ValueDataIntent";
+    public static final String VALUE_DATA_INTENT_SUFFLE = "intentShuffle";
+    public static final String VALUE_DATA_INTENT_REPEAT = "intentRepeat";
     private static final String NAME_TITLE = "tenbaihat";
     private static final String NAME_ARTIST = "tenalbum";
     private static final String DATA_BUNDLER = "dataBunder";
-    private IntentFilter mIntentFilter;
     public String mTenBaiHat;
     public String mTenAlbum;
+    public int mSongIndex;
 
 
     @Override
@@ -75,8 +77,9 @@ public class ServiceMusic extends Service {
 
     @Override
     public void onDestroy() {
+
         super.onDestroy();
-        unregisterReceiver(mMyBroastReceiver);
+
     }
 
     public void playMusic(String mLocalSong) {
@@ -95,11 +98,6 @@ public class ServiceMusic extends Service {
             e.printStackTrace();
         }
         autoPLayNextSong();
-
-    }
-
-    public void getLocaltionSong(int mLocal) {
-        mLocalSong = mLocal;
 
     }
 
@@ -135,14 +133,33 @@ public class ServiceMusic extends Service {
         autoPLayNextSong();
     }
 
+    public void suffleSong() {
+
+        Random mRandom = new Random();
+        mSongIndex = mRandom.nextInt((mArrayListSong.size() - 1) + 1);
+        mUriSong = Uri.parse(mArrayListSong.get(mSongIndex).toString());
+        Log.d("HAHAHA", String.valueOf(mArrayListSong.size()));
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer = MediaPlayer.create(getApplicationContext(), mUriSong);
+        mMediaPlayer.start();
+        autoPLayNextSong();
+
+    }
+
+    public void repeatSong() {
+        mUriSong = Uri.parse(mArrayListSong.get(mLocalSong - 1).toString());
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer = MediaPlayer.create(getApplicationContext(), mUriSong);
+        mMediaPlayer.start();
+        mMediaPlayer.setLooping(true);
+
+    }
 
     public void playSongLocaltion() {
         mUriSong = Uri.parse(mArrayListSong.get(mLocalSong).toString());
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer = MediaPlayer.create(getApplicationContext(), mUriSong);
         mMediaPlayer.start();
-        // TODO : get image and time from song is running
-
         autoPLayNextSong();
     }
 
@@ -150,24 +167,36 @@ public class ServiceMusic extends Service {
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
+
                 mLocalSong = mLocalSong + 1;
+                playSongLocaltion();
                 getNameSong();
+
                 mIntentBroadCast = new Intent();
+                mIntentBroadCastSuffle = new Intent();
+                mIntentBroadCastRepeat = new Intent();
                 mBundler = new Bundle();
                 mBundler.putString(NAME_ARTIST, mTenAlbum);
                 mBundler.putString(NAME_TITLE, mTenBaiHat);
                 mIntentBroadCast.putExtra(DATA_BUNDLER, mBundler);
+
                 mIntentBroadCast.setAction(VALUE_DATA_INTENT);
+                mIntentBroadCastSuffle.setAction(VALUE_DATA_INTENT_SUFFLE);
+                mIntentBroadCastRepeat.setAction(VALUE_DATA_INTENT_REPEAT);
+
                 sendBroadcast(mIntentBroadCast);
-                if (mLocalSong > mArrayListSong.size() - 1) {
-                    mLocalSong = 0;
-                    playSongLocaltion();
-                } else {
-                    playSongLocaltion();
-                }
+                sendBroadcast(mIntentBroadCastSuffle);
+                sendBroadcast(mIntentBroadCastRepeat);
+
 
             }
         });
+    }
+
+
+    public void getLocaltionSong(int mLocal) {
+        mLocalSong = mLocal;
+
     }
 
     private void getNameSong() {

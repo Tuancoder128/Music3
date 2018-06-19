@@ -40,12 +40,12 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toolbar;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+
 import android.graphics.Color;
-
-
 
 
 /**
@@ -96,6 +96,12 @@ public class FragmentListSong extends Fragment {
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+
+    }
 
     public void connectionService() {
         mIntentService = new Intent(getActivity(), ServiceMusic.class);
@@ -271,7 +277,7 @@ public class FragmentListSong extends Fragment {
         mNameSong.setTextColor(Color.RED);
         mTime.setTextColor(Color.RED);
         mNumber.setTextColor(Color.RED);
-       // mNumber.setBackgroundResource(R.drawable.music_note_small);
+
     }
 
     public void setItemNormal()
@@ -295,10 +301,8 @@ public class FragmentListSong extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-
                 mClickPasePlay.setBackgroundResource(R.drawable.ic_media_pause_light);
                 String mLocaltion = mPath.get(i);
-
                 mCLickTenBaiHat.setTextColor(Color.RED);
                 mCLickCasy.setTextColor(Color.RED);
                 mCLickTenBaiHat.setText(arrayList.get(i).getTenBaiHat());
@@ -322,11 +326,10 @@ public class FragmentListSong extends Fragment {
                 mServiceMusic.getLocaltionSong(i);
                 mServiceMusic.getArrayListSong(mPath);
                 getImageSong();
-
-
             }
         });
     }
+
 
     public void getImageSong() {
         MediaMetadataRetriever mGetImage = new MediaMetadataRetriever();
@@ -346,9 +349,8 @@ public class FragmentListSong extends Fragment {
 
         } else {
 
-            mHinhAlbum.setImageResource(R.drawable.bg_default_album_art);
+            mHinhAlbum.setImageResource(R.drawable.ghita);
         }
-
 
     }
 
@@ -378,46 +380,3 @@ public class FragmentListSong extends Fragment {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

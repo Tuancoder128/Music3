@@ -33,9 +33,6 @@ public class MainActivity extends AppCompatActivity implements FragmentListSong.
     private static final String NAME_ARTIST = "tencasy";
     private static final String ARRAY_LIST_SONG = "mangbaihat";
     private static final String BIT_MAP = "bitmap";
-    private static final String BACK_STACK_FRAGMENT_LIST_SONG = "back_fragmentListSong";
-    private static final String BACK_STACK_FRAGMENT_DETAILS = "back_fragmentDetails";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements FragmentListSong.
         mBundle.putString(NAME_TITLE, dataBundler.getString(NAME_TITLE));
         mBundle.putString(NAME_ARTIST, dataBundler.getString(NAME_ARTIST));
         mBundle.putString(ARRAY_LIST_SONG, dataBundler.getString(ARRAY_LIST_SONG));
-
         mBundle.putByteArray(BIT_MAP, dataBundler.getByteArray(BIT_MAP));
         Log.d("AAA", String.valueOf(dataBundler.getByteArray(BIT_MAP)));
         mFragmentDetails = new FragmentDetails();

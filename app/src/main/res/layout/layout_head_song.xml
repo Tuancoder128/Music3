@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:background="#EEEEEE"
-    android:backgroundTint="#95FEFBDE"
+    android:backgroundTint="#45FEFBDE"
     android:layout_width="match_parent"
     android:layout_height="80dp">
     <RelativeLayout
@@ -45,18 +45,13 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
         <ImageView
+            android:layout_marginLeft="25dp"
             android:id="@+id/danhsach"
             android:layout_centerInParent="true"
             android:background="@drawable/custom_press_home"
             android:layout_toRightOf="@id/linnear_name"
             android:layout_width="35dp"
             android:layout_height="35dp" />
-        <ImageView
-            android:id="@+id/popup_song"
-            android:layout_centerInParent="true"
-            android:background="@drawable/ic_menu_moreoverflow_large_normal"
-            android:layout_toRightOf="@id/danhsach"
-            android:layout_width="45dp"
-            android:layout_height="35dp" />
+
     </RelativeLayout>
 </LinearLayout>

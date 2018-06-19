@@ -5,14 +5,29 @@
     android:id="@+id/frame_detais"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ghita"
+    android:background="#f4b18e"
     tools:context="com.bkav.demo.music.DetailSongRuningActivity">
 
-    <include layout="@layout/layout_head_song" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <include
-        android:id="@+id/includebottom"
-        layout="@layout/layout_bottom_go" />
+        <include layout="@layout/layout_head_song" />
+
+        <ImageView
+            android:background="@drawable/shape_image_v"
+            android:id="@+id/background_hinhalbum"
+            android:layout_width="match_parent"
+            android:layout_height="450dp"
+             />
+
+        <include
+
+            android:id="@+id/includebottom"
+            layout="@layout/layout_bottom_go" />
+    </LinearLayout>
+
 
 </FrameLayout>
 

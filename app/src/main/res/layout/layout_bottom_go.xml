@@ -5,7 +5,7 @@
     android:layout_height="90dp"
     android:layout_gravity="bottom"
     android:background="#EEEEEE"
-    android:backgroundTint="#95FEFBDE"
+    android:backgroundTint="#45FEFBDE"
     android:orientation="vertical"
     android:weightSum="2">
 
@@ -17,7 +17,7 @@
         <SeekBar
             android:id="@+id/seekbar"
             android:layout_width="match_parent"
-            android:layout_height="12dp" />
+            android:layout_height="20dp" />
 
 
     </RelativeLayout>
@@ -57,17 +57,17 @@
 
         <ImageView
             android:id="@+id/repeat"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_gravity="center"
             android:layout_marginRight="35dp"
             android:layout_weight="2"
-            android:background="@drawable/ic_repeat_dark" />
+             />
 
         <ImageView
             android:id="@+id/previous"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_gravity="center"
             android:layout_marginRight="35dp"
             android:layout_weight="2"
@@ -75,8 +75,8 @@
 
         <ImageView
             android:id="@+id/pause_play"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
             android:layout_gravity="center"
             android:layout_marginRight="35dp"
             android:layout_weight="2" />
@@ -84,8 +84,8 @@
 
         <ImageView
             android:id="@+id/next"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_gravity="center"
             android:layout_marginRight="35dp"
             android:layout_weight="2"
@@ -93,10 +93,10 @@
 
         <ImageView
             android:id="@+id/shuffle"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_gravity="center"
             android:layout_weight="2"
-            android:background="@drawable/ic_shuffle_dark" />
+            />
     </LinearLayout>
 </LinearLayout>
