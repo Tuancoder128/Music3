@@ -362,9 +362,7 @@ public class FragmentListSong extends Fragment {
 
             mHinhAlbum.setImageResource(R.drawable.ghita);
         }
-
     }
-
 
     public void managerSeekBar() {
         sendMessage();
@@ -403,9 +401,7 @@ public class FragmentListSong extends Fragment {
                     try {
                         Message msg = new Message();
                         msg.what = ServiceMusic.mMediaPlayer.getCurrentPosition();
-                       // Log.d("AAAaa", String.valueOf(ServiceMusic.mMediaPlayer.getCurrentPosition()));
                         mHandler.sendMessage(msg);
-                       // Log.d("AAAaa", String.valueOf(msg));
                         Thread.sleep(MY_RESULT_CODE_SEND_MESSAGE);
                     } catch (InterruptedException e) {
                     }
@@ -416,7 +412,7 @@ public class FragmentListSong extends Fragment {
             @Override
             public void handleMessage(Message msg) {
                 mSeekBarListMain.setProgress(msg.what);
-                Log.d("AAAaa", String.valueOf(msg.what));
+                mSeekBarListMain.setMax(ServiceMusic.mMediaPlayer.getDuration());
             }
         };
 
