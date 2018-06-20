@@ -22,7 +22,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 
@@ -38,11 +40,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import android.graphics.Color;
@@ -55,11 +59,11 @@ import android.graphics.Color;
 public class FragmentListSong extends Fragment {
 
 
-    public ArrayList<ThongTinBaiHat> arrayList;
-    public ArrayList<String> mPath;
-    public AdapterBaiHat baiHatAdapter;
-    public ListView mListBaiHat;
-    public TextView mCLickTenBaiHat;
+    private ArrayList<ThongTinBaiHat> arrayList;
+    private ArrayList<String> mPath;
+    private AdapterBaiHat baiHatAdapter;
+    private ListView mListBaiHat;
+    private TextView mCLickTenBaiHat;
     private TextView mTenBaiHat;
     public TextView mCLickCasy;
     private TextView mTime;
@@ -70,15 +74,17 @@ public class FragmentListSong extends Fragment {
     private ImageView mImagePlaySong;
     private Button mClickPasePlay;
     private RelativeLayout mMoveSong;
+    private SeekBar mSeekBarListMain;
     public Intent mIntentService;
     public Bundle mBundle;
-    public Bundle mBundleService;
+    private Bundle mBundleService;
     private android.support.v7.widget.Toolbar mToolbar;
     public boolean mboundService = false;
     public ServiceMusic mServiceMusic;
     private SendDataToFragmentDetails mSendDataToFragmentDetails;
     public String mLocal;
     public Bitmap mBitmap;
+    private Handler mHandler;
     private static final String NAME_TITLE = "tenbaihat";
     private static final String NAME_ARTIST = "tencasy";
     private static final String NAME_ARTIST_ = "tenalbum";
@@ -86,6 +92,7 @@ public class FragmentListSong extends Fragment {
     private static final String LOCALTION = "localSong";
     private static final String BIT_MAP = "bitmap";
     private static final String DATA_BUNDLER = "dataBunder";
+    private static final int MY_RESULT_CODE_SEND_MESSAGE = 1000;
 
 
     @Override
@@ -219,6 +226,7 @@ public class FragmentListSong extends Fragment {
         activity.setSupportActionBar(mToolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
+        mSeekBarListMain = (SeekBar) view.findViewById(R.id.seekbar_listmain);
 
         mNumber = (TextView) view.findViewById(R.id.number);
         mListBaiHat = (ListView) view.findViewById(R.id.list_album);
@@ -259,35 +267,34 @@ public class FragmentListSong extends Fragment {
 
         return view;
     }
-    public void animationText(){
+
+    public void animationText() {
         TranslateAnimation animation = new TranslateAnimation(500.0f, 0.0f, 0.0f, 0.0f);
         animation.setDuration(800);
         animation.setRepeatCount(0);
         animation.setFillAfter(false);
-        mCLickTenBaiHat .startAnimation(animation);
+        mCLickTenBaiHat.startAnimation(animation);
         mCLickCasy.startAnimation(animation);
 
     }
 
-    public void setItemSelected(View view){
+    public void setItemSelected(View view) {
         View rowView = view;
-        TextView mNameSong = (TextView)rowView.findViewById(R.id.name_song);
-        TextView mTime= (TextView)rowView.findViewById(R.id.time);
-        TextView mNumber= (TextView)rowView.findViewById(R.id.number);
+        TextView mNameSong = (TextView) rowView.findViewById(R.id.name_song);
+        TextView mTime = (TextView) rowView.findViewById(R.id.time);
+        TextView mNumber = (TextView) rowView.findViewById(R.id.number);
         mNameSong.setTextColor(Color.RED);
         mTime.setTextColor(Color.RED);
         mNumber.setTextColor(Color.RED);
 
     }
 
-    public void setItemNormal()
-    {
-        for (int i=0; i< mListBaiHat.getChildCount(); i++)
-        {
+    public void setItemNormal() {
+        for (int i = 0; i < mListBaiHat.getChildCount(); i++) {
             View v = mListBaiHat.getChildAt(i);
-            TextView mTime= (TextView)v.findViewById(R.id.time);
-            TextView mNumber= (TextView)v.findViewById(R.id.number);
-            TextView mNameSong = ((TextView)v.findViewById(R.id.name_song));
+            TextView mTime = (TextView) v.findViewById(R.id.time);
+            TextView mNumber = (TextView) v.findViewById(R.id.number);
+            TextView mNameSong = ((TextView) v.findViewById(R.id.name_song));
             mNameSong.setTextColor(Color.BLACK);
             mTime.setTextColor(Color.BLACK);
             mNumber.setTextColor(Color.BLACK);
@@ -325,7 +332,10 @@ public class FragmentListSong extends Fragment {
                 mServiceMusic.playMusic(mLocaltion);
                 mServiceMusic.getLocaltionSong(i);
                 mServiceMusic.getArrayListSong(mPath);
+
+                managerSeekBar();
                 getImageSong();
+
 
             }
         });
@@ -354,6 +364,64 @@ public class FragmentListSong extends Fragment {
         }
 
     }
+
+
+    public void managerSeekBar() {
+        sendMessage();
+        mSeekBarListMain.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                // trả về giá trị của seekbar , vd như khi kéo thả seekbar
+
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // sự kiện khi chạm vào seekbar
+                ServiceMusic.mMediaPlayer.seekTo(seekBar.getProgress());
+                // Log.d("AAAaa", String.valueOf(seekBar.getProgress()));
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //sự kiên khi nhả seekbar
+                ServiceMusic.mMediaPlayer.seekTo(seekBar.getProgress());
+
+            }
+        });
+
+
+    }
+
+    public void sendMessage() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (ServiceMusic.mMediaPlayer != null) {
+                    try {
+                        Message msg = new Message();
+                        msg.what = ServiceMusic.mMediaPlayer.getCurrentPosition();
+                       // Log.d("AAAaa", String.valueOf(ServiceMusic.mMediaPlayer.getCurrentPosition()));
+                        mHandler.sendMessage(msg);
+                       // Log.d("AAAaa", String.valueOf(msg));
+                        Thread.sleep(MY_RESULT_CODE_SEND_MESSAGE);
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+        }).start();
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                mSeekBarListMain.setProgress(msg.what);
+                Log.d("AAAaa", String.valueOf(msg.what));
+            }
+        };
+
+    }
+
 
     ServiceConnection serviceConnection = new ServiceConnection() {
         @Override

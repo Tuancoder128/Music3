@@ -6,73 +6,88 @@
     android:layout_gravity="bottom"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <RelativeLayout
-        android:layout_margin="1dp"
-        android:id="@+id/move_song"
-        android:layout_marginBottom="0dp"
-        android:gravity="fill"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-
-        android:background="#fff">
-
-        <ImageView
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginLeft="5dp"
-            android:id="@+id/hinh_album"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="@drawable/bg_default_album_art" />
+        android:layout_height="90dp">
+        <SeekBar
+            android:background="#f9c5c5"
+            android:id="@+id/seekbar_listmain"
+            android:layout_width="match_parent"
+            android:layout_height="13dp" />
 
 
-        <LinearLayout
-            android:layout_marginLeft="2dp"
-            android:layout_alignParentTop="true"
-            android:id="@+id/linnear_include_name"
-            android:layout_toRightOf="@id/hinh_album"
-            android:layout_width="230dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="vertical">
+        <RelativeLayout
+            android:layout_margin="1dp"
+            android:id="@+id/move_song"
+            android:layout_marginBottom="0dp"
+            android:gravity="fill"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
 
+            android:background="#fff">
 
-            <TextView
-                android:textStyle="italic"
-                android:layout_marginTop="10dp"
-                android:textColor="#181717"
-                android:id="@+id/click_tenbaihat"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:text="Ten bai hat"
-                android:textSize="15sp" />
-
-            <TextView
-                android:textStyle="italic"
-                android:textColor="#282826"
+            <ImageView
                 android:layout_marginTop="5dp"
-                android:id="@+id/click_casy"
-                android:layout_width="200dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/hinh_album"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/bg_default_album_art" />
+
+
+            <LinearLayout
+                android:layout_marginLeft="2dp"
+                android:layout_alignParentTop="true"
+                android:id="@+id/linnear_include_name"
+                android:layout_toRightOf="@id/hinh_album"
+                android:layout_width="230dp"
                 android:layout_height="wrap_content"
-                android:text="Ten ca sy"
-                android:textSize="12sp" />
-
-        </LinearLayout>
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical">
 
 
-        <Button
-            android:layout_marginRight="15dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerInParent="true"
-            android:id="@+id/click_pause_play_main"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:background="@drawable/ic_play_black" />
+                <TextView
+                    android:textStyle="italic"
+                    android:layout_marginTop="10dp"
+                    android:textColor="#181717"
+                    android:id="@+id/click_tenbaihat"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:text="Ten bai hat"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:textStyle="italic"
+                    android:textColor="#282826"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/click_casy"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:text="Ten ca sy"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
 
 
-    </RelativeLayout>
+            <Button
+                android:layout_marginRight="15dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:id="@+id/click_pause_play_main"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_play_black" />
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
 
 
 </RelativeLayout>

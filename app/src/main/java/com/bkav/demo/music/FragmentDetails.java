@@ -61,7 +61,7 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
     public Bundle mBundle;
     private String mTenAlbumBack;
     private String mTenBaiHatBack;
-    FragmentListSong mFragmentListSong;
+    private FragmentListSong mFragmentListSong;
     private static final int MY_RESULT_CODE_SEND_MESSAGE = 1000;
     public boolean mboundService = false;
     public ServiceMusic mServiceMusic;
@@ -347,8 +347,8 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
             String mTenBaiHatBackShuffle = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
             mTenBaiHat.setText(mTenAlbumBackShuffle);
             mTenAlbum.setText(mTenBaiHatBackShuffle);
-            Log.d("SSSS", mTenAlbumBackShuffle);
-            Log.d("SSSS", mTenBaiHatBackShuffle);
+            //Log.d("SSSS", mTenAlbumBackShuffle);
+           // Log.d("SSSS", mTenBaiHatBackShuffle);
             zoomText();
 
         }
@@ -389,8 +389,8 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
                     try {
                         Message msg = new Message();
                         msg.what = ServiceMusic.mMediaPlayer.getCurrentPosition();
-                        Log.d("AAA", String.valueOf(ServiceMusic.mMediaPlayer.getCurrentPosition()));
                         mHandler.sendMessage(msg);
+                       // Log.d("VVVVVVVVVVV", String.valueOf(msg));
                         Thread.sleep(MY_RESULT_CODE_SEND_MESSAGE);
                     } catch (InterruptedException e) {
                     }
@@ -401,9 +401,9 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
             @Override
             public void handleMessage(Message msg) {
                 mSeekBar.setProgress(msg.what);
+                //Log.d("VVVVVVVVVVV", String.valueOf(msg.what));
             }
         };
-
     }
 
     private void timeStart() {
@@ -412,7 +412,6 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
             public void run() {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
                 mTimeStart.setText(simpleDateFormat.format(ServiceMusic.mMediaPlayer.getCurrentPosition()));
-                mSeekBar.setProgress(ServiceMusic.mMediaPlayer.getCurrentPosition());
                 mHandler.postDelayed(this, MY_RESULT_CODE_SEND_MESSAGE);
 
             }
