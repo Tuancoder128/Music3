@@ -1,6 +1,7 @@
 package com.bkav.demo.music;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +31,7 @@ public class AdapterBaiHat extends BaseAdapter {
         this.arrayList = arrayList;
     }
 
-    private class ViewHolder{
+    private class ViewHolder {
         private TextView mSoThuTu;
         private TextView mTenBaHat;
         private TextView mTime;
@@ -57,9 +58,9 @@ public class AdapterBaiHat extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         final ViewHolder viewHolder;
-        if(view == null){
+        if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(resource,viewGroup,false);
+            view = inflater.inflate(resource, viewGroup, false);
             viewHolder = new ViewHolder();
             viewHolder.mSoThuTu = view.findViewById(R.id.number);
             viewHolder.mTime = view.findViewById(R.id.time);
@@ -67,10 +68,11 @@ public class AdapterBaiHat extends BaseAdapter {
             viewHolder.mOther = view.findViewById(R.id.other);
             view.setTag(viewHolder);
 
-        }else {
+        } else {
             viewHolder = (ViewHolder) view.getTag();
         }
         final ThongTinBaiHat thongTinBaiHat = arrayList.get(i);
+
 
         viewHolder.mTenBaHat.setText(thongTinBaiHat.getTenBaiHat());
         viewHolder.mTime.setText(thongTinBaiHat.getThoigian());
@@ -78,12 +80,12 @@ public class AdapterBaiHat extends BaseAdapter {
         viewHolder.mOther.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupMenu popupMenu =  new PopupMenu(context,viewHolder.mOther);
+                PopupMenu popupMenu = new PopupMenu(context, viewHolder.mOther);
                 popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
 
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        Toast.makeText(context,YOU_CLICKTED + item.getTitle(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, YOU_CLICKTED + item.getTitle(), Toast.LENGTH_SHORT).show();
 
                         return true;
                     }
@@ -95,6 +97,7 @@ public class AdapterBaiHat extends BaseAdapter {
 
         return view;
     }
+
 }
 
 

@@ -38,15 +38,12 @@ public class MainActivity extends AppCompatActivity implements FragmentListSong.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         mFragmentManager = getFragmentManager();
         mFragmentTransaction = mFragmentManager.beginTransaction();
         FragmentListSong mFragmentListSong = new FragmentListSong();
         mFragmentTransaction.replace(R.id.frame_main, mFragmentListSong);
-        mFragmentTransaction.addToBackStack(null);
         mFragmentTransaction.commit();
 
         checkPermission();
@@ -93,8 +90,7 @@ public class MainActivity extends AppCompatActivity implements FragmentListSong.
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.mymenu, menu);
         MenuItem search = menu.findItem(R.id.item_search);
-        //SearchView searchView = (SearchView) search.getActionView();
-        //searchView.setOnQueryTextListener(MainActivity.this);
+        SearchView searchView = (SearchView) search.getActionView();
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -125,8 +121,8 @@ public class MainActivity extends AppCompatActivity implements FragmentListSong.
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_main, mFragmentDetails);
-        mFragmentTransaction.addToBackStack(null);
+        fragmentTransaction.add(R.id.frame_main, mFragmentDetails);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
     }

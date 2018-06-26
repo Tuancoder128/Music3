@@ -8,8 +8,6 @@
     android:orientation="vertical"
     tools:context="com.bkav.demo.music.MainActivity">
 
-
-
     <FrameLayout
         android:id="@+id/frame_main"
         android:layout_width="match_parent"

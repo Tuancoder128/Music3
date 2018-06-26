@@ -80,15 +80,20 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
     private static final String NAME_ARTIST = "tencasy";
     private static final String NAME_ARTIST_ = "tenalbum";
     private static final String DATA_BUNDLER = "dataBunder";
-    private static final String NOTIFICATION_SHUFFLE = "Nghe bài hát ngẫu nhiên ";
-    private static final String NOTIFICATION_REPEAT = "Lặp lại bài hát hiện tại ";
+    private static final String NOTIFICATION_SHUFFLE_ON = "Nghe bài hát ngẫu nhiên ";
+    private static final String NOTIFICATION_SHUFFLE_OFF = "Tắt chế độ ngẫu nhiên ";
+    private static final String NOTIFICATION_REPEAT_ON = "Lặp lại bài hát hiện tại ";
+    private static final String NOTIFICATION_REPEATON_OFF = "Tắt chế độ lặp ";
     private IntentFilter mIntentFilter;
     private FragmentDetails mFragmentDetails;
+
+    boolean repeat = false;
+    boolean random = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.d("RUN_DETAILS","onCreate");
         mMyBroastReceiver = new MyBroastReceiver();
         mIntentFilter = new IntentFilter();
 
@@ -97,7 +102,7 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
+        Log.d("RUN_DETAILS","onAttach");
         getActivity().registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -105,8 +110,7 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
                     mBundle = intent.getBundleExtra(DATA_BUNDLER);
                     mTenAlbum.setText(mBundle.getString(NAME_TITLE));
                     mTenBaiHat.setText(mBundle.getString(NAME_ARTIST_));
-                    Log.d("VVV", mBundle.getString(NAME_TITLE));
-                    Log.d("VVV", mBundle.getString(NAME_ARTIST_));
+
                     getImageSong();
                     managerSeekBar();
                     allTimeSong();
@@ -121,48 +125,25 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-
+        Log.d("RUN_DETAILS","onStart");
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
-//        getView().setFocusableInTouchMode(true);
-//        getView().requestFocus();
-//        getView().setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-//                    updateNameSong();
-//                    mIntentBroadCast = new Intent();
-//                    mBundler = new Bundle();
-//                    mBundler.putString(NAME_ARTIST_, mTenAlbumBack);
-//                    mBundler.putString(NAME_TITLE, mTenBaiHatBack);
-//                    mIntentBroadCast.putExtra(DATA_BUNDLER, mBundler);
-//                    mIntentBroadCast.setAction(VALUE_DATA_INTENT);
-//                    getActivity().sendBroadcast(mIntentBroadCast);
-//                    Toast.makeText(mServiceMusic, "YOU CLICKED FRAGMENT", Toast.LENGTH_SHORT).show();
-//                    mFragmentListSong = new FragmentListSong();
-//                    FragmentManager fragmentManager = getFragmentManager();
-//                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//                    fragmentTransaction.replace(R.id.frame_main, mFragmentListSong);
-//                    fragmentTransaction.commit();
-//                    return true;
-//                }
-//
-//                return false;
-//            }
-//        });
+        Log.d("RUN_DETAILS","onResume");
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_details, container, false);
+        Log.d("RUN_DETAILS","onCreateView");
         connectionService();
 
-        mFrameLayout = (FrameLayout)view.findViewById(R.id.frame_detais);
+        mFrameLayout = (FrameLayout) view.findViewById(R.id.frame_detais);
         mHinhDanhSach = (ImageView) view.findViewById(R.id.danhsach);
         mPausePlay = (ImageView) view.findViewById(R.id.pause_play);
         mPrevious = (ImageView) view.findViewById(R.id.previous);
@@ -210,8 +191,7 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
                 FragmentManager fragmentManager = getFragmentManager();
                 mFragmentListSong = new FragmentListSong();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.frame_main,mFragmentListSong);
-                //mFragmentTransaction.addToBackStack(null);
+                fragmentManager.popBackStack();
                 fragmentTransaction.commit();
             }
         });
@@ -228,9 +208,6 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
             mBackgroundHinhAlbum.setImageResource(R.drawable.ghita);
         }
     }
-
-
-
 
 
     public void getImageSong() {
@@ -279,7 +256,6 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
             mHinhCaSy.setImageResource(R.drawable.ghita);
         }
 
-
     }
 
     public void getImageSongRepeat() {
@@ -287,7 +263,7 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
         byte[] mRawArt;
         mBitmap = null;
         BitmapFactory.Options bfo = new BitmapFactory.Options();
-        mGetImage.setDataSource(mServiceMusic.mArrayListSong.get(mServiceMusic.mLocalSong -1));
+        mGetImage.setDataSource(mServiceMusic.mArrayListSong.get(mServiceMusic.mLocalSong - 1));
         mRawArt = mGetImage.getEmbeddedPicture();
 
         if (null != mRawArt) {
@@ -327,7 +303,7 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
         MediaMetadataRetriever retriever = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1) {
             retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(mServiceMusic.mArrayListSong.get(mServiceMusic.mLocalSong -1));
+            retriever.setDataSource(mServiceMusic.mArrayListSong.get(mServiceMusic.mLocalSong - 1));
             mTenAlbumBack = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
             mTenBaiHatBack = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
             mTenBaiHat.setText(mTenAlbumBack);
@@ -347,8 +323,7 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
             String mTenBaiHatBackShuffle = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
             mTenBaiHat.setText(mTenAlbumBackShuffle);
             mTenAlbum.setText(mTenBaiHatBackShuffle);
-            //Log.d("SSSS", mTenAlbumBackShuffle);
-           // Log.d("SSSS", mTenBaiHatBackShuffle);
+
             zoomText();
 
         }
@@ -361,19 +336,15 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                // trả về giá trị của seekbar , vd như khi kéo thả seekbar
-                // ServiceMusic.mMediaPlayer.seekTo(i);
 
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                // sự kiện khi chạm vào seekbar
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                //sự kiên khi nhả seekbar
                 ServiceMusic.mMediaPlayer.seekTo(seekBar.getProgress());
             }
         });
@@ -390,7 +361,6 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
                         Message msg = new Message();
                         msg.what = ServiceMusic.mMediaPlayer.getCurrentPosition();
                         mHandler.sendMessage(msg);
-                       // Log.d("VVVVVVVVVVV", String.valueOf(msg));
                         Thread.sleep(MY_RESULT_CODE_SEND_MESSAGE);
                     } catch (InterruptedException e) {
                     }
@@ -401,7 +371,7 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
             @Override
             public void handleMessage(Message msg) {
                 mSeekBar.setProgress(msg.what);
-                //Log.d("VVVVVVVVVVV", String.valueOf(msg.what));
+
             }
         };
     }
@@ -436,12 +406,30 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
         mTenBaiHat.startAnimation(mZoom);
     }
 
-    public void animImageSong(){
-        Animation mAnimation = AnimationUtils.loadAnimation(getActivity(),R.anim.anim_image_s);
+    public void animImageSong() {
+        Animation mAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_image_s);
         mAnimation.reset();
         mBackgroundHinhAlbum.clearAnimation();
         mBackgroundHinhAlbum.startAnimation(mAnimation);
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("RUN_DETAILS","onPause");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("RUN_DETAILS","onDestroyView");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("RUN_DETAILS","onDestroy");
     }
 
     @Override
@@ -478,42 +466,72 @@ public class FragmentDetails extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.repeat:
-                Toast.makeText(mServiceMusic, NOTIFICATION_REPEAT, Toast.LENGTH_SHORT).show();
-                mShuffle.setImageResource(R.drawable.ic_shuffle_dark);
-                mRepeat.setImageResource(R.drawable.ic_repeat_one_song_dark);
-                getActivity().registerReceiver(new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        ServiceMusic.mMediaPlayer.release();
-                        ServiceMusic.mMediaPlayer = null;
-                        mServiceMusic.repeatSong();
-                        updateNameSongRepeat();
-                        getImageSongRepeat();
-                        managerSeekBar();
-                        allTimeSong();
-                        animImageSong();
+                if (repeat == false) {
+                    if (random == true) {
+                        random = false;
+                        mShuffle.setImageResource(R.drawable.ic_shuffle_dark);
+                        mRepeat.setImageResource(R.drawable.ic_repeat_one_song_dark);
                     }
-                }, new IntentFilter(ServiceMusic.VALUE_DATA_INTENT_REPEAT));
+                    mRepeat.setImageResource(R.drawable.ic_repeat_one_song_dark);
+                    repeat = true;
+                    Toast.makeText(mServiceMusic, NOTIFICATION_REPEAT_ON, Toast.LENGTH_SHORT).show();
+                    // mShuffle.setImageResource(R.drawable.ic_shuffle_dark);
+                    // mRepeat.setImageResource(R.drawable.ic_repeat_one_song_dark);
+                    getActivity().registerReceiver(new BroadcastReceiver() {
+                        @Override
+                        public void onReceive(Context context, Intent intent) {
+                            ServiceMusic.mMediaPlayer.release();
+                            ServiceMusic.mMediaPlayer = null;
+                            mServiceMusic.repeatSong();
+                            updateNameSongRepeat();
+                            getImageSongRepeat();
+                            managerSeekBar();
+                            allTimeSong();
+                            animImageSong();
+                        }
+                    }, new IntentFilter(ServiceMusic.VALUE_DATA_INTENT_REPEAT));
+                } else {
+                    Toast.makeText(mServiceMusic, NOTIFICATION_REPEATON_OFF, Toast.LENGTH_SHORT).show();
+                    mRepeat.setImageResource(R.drawable.ic_repeat_dark);
+                    repeat = false;
+
+                }
+
                 break;
 
 
             case R.id.shuffle:
-                Toast.makeText(mServiceMusic, NOTIFICATION_SHUFFLE, Toast.LENGTH_SHORT).show();
-                mShuffle.setImageResource(R.drawable.ic_play_shuffle_orange_noshadow);
-                mRepeat.setImageResource(R.drawable.ic_repeat_dark);
-                getActivity().registerReceiver(new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        ServiceMusic.mMediaPlayer.release();
-                        ServiceMusic.mMediaPlayer = null;
-                        mServiceMusic.suffleSong();
-                        managerSeekBar();
-                        allTimeSong();
-                        updateNameSongShuffle();
-                        getImageSongSuffle();
-                        animImageSong();
+                if (random == false) {
+                    if (repeat == true) {
+                        repeat = false;
+                        mShuffle.setImageResource(R.drawable.ic_play_shuffle_orange_noshadow);
+                        mRepeat.setImageResource(R.drawable.ic_repeat_dark);
                     }
-                }, new IntentFilter(ServiceMusic.VALUE_DATA_INTENT_SUFFLE));
+                    mShuffle.setImageResource(R.drawable.ic_play_shuffle_orange_noshadow);
+                    random = true;
+                    Toast.makeText(mServiceMusic, NOTIFICATION_SHUFFLE_ON, Toast.LENGTH_SHORT).show();
+                    // mShuffle.setImageResource(R.drawable.ic_play_shuffle_orange_noshadow);
+                    // mRepeat.setImageResource(R.drawable.ic_repeat_dark);
+                    getActivity().registerReceiver(new BroadcastReceiver() {
+                        @Override
+                        public void onReceive(Context context, Intent intent) {
+                            ServiceMusic.mMediaPlayer.release();
+                            ServiceMusic.mMediaPlayer = null;
+                            mServiceMusic.suffleSong();
+                            managerSeekBar();
+                            allTimeSong();
+                            updateNameSongShuffle();
+                            getImageSongSuffle();
+                            animImageSong();
+                        }
+                    }, new IntentFilter(ServiceMusic.VALUE_DATA_INTENT_SUFFLE));
+
+                } else {
+                    mShuffle.setImageResource(R.drawable.ic_shuffle_dark);
+                    Toast.makeText(mServiceMusic, NOTIFICATION_SHUFFLE_OFF, Toast.LENGTH_SHORT).show();
+                    random = false;
+
+                }
 
         }
     }

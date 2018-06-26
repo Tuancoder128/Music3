@@ -98,21 +98,24 @@ public class FragmentListSong extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        connectionService();
-
+        Log.d("RUN", "onCreate");
+        if (savedInstanceState != null) {
+            Log.d("RUN", String.valueOf(savedInstanceState.getString("ABC")));
+        }
 
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
-
+        outState.putString("ABC", "VuVanTuan");
+        Log.d("RUN", "onSaveInstanceState");
     }
 
     public void connectionService() {
         mIntentService = new Intent(getActivity(), ServiceMusic.class);
         getActivity().bindService(mIntentService, serviceConnection, Context.BIND_AUTO_CREATE);
+
     }
 
 
@@ -120,6 +123,7 @@ public class FragmentListSong extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        Log.d("RUN", "onAttach");
         mSendDataToFragmentDetails = (SendDataToFragmentDetails) context;
 
         getActivity().registerReceiver(new BroadcastReceiver() {
@@ -128,10 +132,9 @@ public class FragmentListSong extends Fragment {
                 if (intent != null) {
                     mBundle = intent.getBundleExtra(DATA_BUNDLER);
                     mCLickTenBaiHat.setText(mBundle.getString(NAME_TITLE));
-                    Log.d("VUVANTUAN", String.valueOf(mBundle.getString(NAME_TITLE)));
                     mCLickCasy.setText(mBundle.getString(NAME_ARTIST_));
-                    Log.d("VUVANTUAN", String.valueOf(mBundle.getString(NAME_ARTIST_)));
                     getImageSong();
+                    setItemNormal();
                 }
             }
         }, new IntentFilter(ServiceMusic.VALUE_DATA_INTENT));
@@ -141,7 +144,12 @@ public class FragmentListSong extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         baiHatAdapter.notifyDataSetChanged();
+        if (savedInstanceState != null) {
+            Log.d("DATA", String.valueOf(savedInstanceState.getString("ABC")));
 
+        }
+
+        Log.d("RUN", "onActivityCreated");
 
     }
 
@@ -155,6 +163,8 @@ public class FragmentListSong extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("RUN", "onResume");
+        clickSong();
 
     }
 
@@ -215,6 +225,7 @@ public class FragmentListSong extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        Log.d("RUN", "onCreateView");
 
         View view = inflater.inflate(R.layout.fragment_list_main, container, false);
         mHinhAlbum = (ImageView) view.findViewById(R.id.hinh_album);
@@ -227,7 +238,6 @@ public class FragmentListSong extends Fragment {
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         mSeekBarListMain = (SeekBar) view.findViewById(R.id.seekbar_listmain);
-
         mNumber = (TextView) view.findViewById(R.id.number);
         mListBaiHat = (ListView) view.findViewById(R.id.list_album);
         mTenBaiHat = (TextView) view.findViewById(R.id.tenbaihat);
@@ -241,10 +251,29 @@ public class FragmentListSong extends Fragment {
         arrayList = new ArrayList<>();
         getMusic();
         getAllListMusic();
-        clickSong();
         changeLayoutFragment();
         baiHatAdapter = new AdapterBaiHat(getActivity(), R.layout.activity_baihat, arrayList);
         mListBaiHat.setAdapter(baiHatAdapter);
+        clickSong();
+        if (mServiceMusic != null) {
+            mClickPasePlay.setBackgroundResource(R.drawable.ic_media_pause_light);
+            getImageSong();
+            MediaMetadataRetriever retriever = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1) {
+                retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(mServiceMusic.mArrayListSong.get(mServiceMusic.mLocalSong));
+                String mTenAlbum = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                String mTenBaiHat = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+
+                managerSeekBar();
+                mCLickCasy.setText(mTenAlbum);
+                mCLickTenBaiHat.setText(mTenBaiHat);
+
+            }
+
+        } else {
+            connectionService();
+        }
 
         mClickPasePlay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -268,6 +297,26 @@ public class FragmentListSong extends Fragment {
         return view;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("RUN", "onPause");
+
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("RUN", "onDestroyView");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("RUN", "onDestroy");
+    }
+
     public void animationText() {
         TranslateAnimation animation = new TranslateAnimation(500.0f, 0.0f, 0.0f, 0.0f);
         animation.setDuration(800);
@@ -275,17 +324,6 @@ public class FragmentListSong extends Fragment {
         animation.setFillAfter(false);
         mCLickTenBaiHat.startAnimation(animation);
         mCLickCasy.startAnimation(animation);
-
-    }
-
-    public void setItemSelected(View view) {
-        View rowView = view;
-        TextView mNameSong = (TextView) rowView.findViewById(R.id.name_song);
-        TextView mTime = (TextView) rowView.findViewById(R.id.time);
-        TextView mNumber = (TextView) rowView.findViewById(R.id.number);
-        mNameSong.setTextColor(Color.RED);
-        mTime.setTextColor(Color.RED);
-        mNumber.setTextColor(Color.RED);
 
     }
 
@@ -302,6 +340,18 @@ public class FragmentListSong extends Fragment {
 
         }
     }
+
+    public void setItemSelected(View view) {
+        View rowView = view;
+        TextView mNameSong = (TextView) rowView.findViewById(R.id.name_song);
+        TextView mTime = (TextView) rowView.findViewById(R.id.time);
+        TextView mNumber = (TextView) rowView.findViewById(R.id.number);
+        mNameSong.setTextColor(Color.RED);
+        mTime.setTextColor(Color.RED);
+        mNumber.setTextColor(Color.RED);
+
+    }
+
 
     public void clickSong() {
         mListBaiHat.setOnItemClickListener(new AdapterView.OnItemClickListener() {
