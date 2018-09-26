@@ -29,8 +29,11 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -42,14 +45,18 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.graphics.Color;
+
+import com.bkav.demo.music.SQLiteDatabase.Database;
 
 
 /**
@@ -59,10 +66,10 @@ import android.graphics.Color;
 public class FragmentListSong extends Fragment {
 
 
-    private ArrayList<ThongTinBaiHat> arrayList;
-    private ArrayList<String> mPath;
-    private AdapterBaiHat baiHatAdapter;
-    private ListView mListBaiHat;
+    public static ArrayList<ThongTinBaiHat> arrayList;
+    public static ArrayList<String> mPath;
+    public static AdapterBaiHat baiHatAdapter;
+    public static ListView mListBaiHat;
     private TextView mCLickTenBaiHat;
     private TextView mTenBaiHat;
     public TextView mCLickCasy;
@@ -75,7 +82,7 @@ public class FragmentListSong extends Fragment {
     private Button mClickPasePlay;
     private RelativeLayout mMoveSong;
     private SeekBar mSeekBarListMain;
-    public Intent mIntentService;
+    private Intent mIntentService;
     public Bundle mBundle;
     private Bundle mBundleService;
     private android.support.v7.widget.Toolbar mToolbar;
@@ -93,23 +100,23 @@ public class FragmentListSong extends Fragment {
     private static final String BIT_MAP = "bitmap";
     private static final String DATA_BUNDLER = "dataBunder";
     private static final int MY_RESULT_CODE_SEND_MESSAGE = 1000;
+    private Database mDatabase;
+
+    String currentTittle;
+    String currentArist;
+    String currentDuration;
+    int currentAlbum;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("RUN", "onCreate");
-        if (savedInstanceState != null) {
-            Log.d("RUN", String.valueOf(savedInstanceState.getString("ABC")));
-        }
 
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("ABC", "VuVanTuan");
-        Log.d("RUN", "onSaveInstanceState");
     }
 
     public void connectionService() {
@@ -123,7 +130,6 @@ public class FragmentListSong extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d("RUN", "onAttach");
         mSendDataToFragmentDetails = (SendDataToFragmentDetails) context;
 
         getActivity().registerReceiver(new BroadcastReceiver() {
@@ -144,13 +150,10 @@ public class FragmentListSong extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         baiHatAdapter.notifyDataSetChanged();
-        if (savedInstanceState != null) {
-            Log.d("DATA", String.valueOf(savedInstanceState.getString("ABC")));
+    }
 
-        }
-
-        Log.d("RUN", "onActivityCreated");
-
+    public void notifiInformation() {
+        baiHatAdapter.notifyDataSetChanged();
     }
 
 
@@ -163,9 +166,7 @@ public class FragmentListSong extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("RUN", "onResume");
         clickSong();
-
     }
 
     public void getMusic() {
@@ -179,13 +180,13 @@ public class FragmentListSong extends Fragment {
             int songTime = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
             int songImage = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
 
-
             do {
-                String currentTittle = songCursor.getString(songTittle);
-                String currentArist = songCursor.getString(songArtist);
-                int currentAlbum = songCursor.getInt(songImage);
-                int giay = songCursor.getInt(songTime) / 1000;
+                currentTittle = songCursor.getString(songTittle);
+                currentArist = songCursor.getString(songArtist);
+                currentDuration = songCursor.getString(songTime);
+                currentAlbum = songCursor.getInt(songImage);
 
+                int giay = songCursor.getInt(songTime) / 1000;
                 int phut = giay / 60;
                 int giayLe = giay - phut * 60;
                 String giayle;
@@ -195,14 +196,18 @@ public class FragmentListSong extends Fragment {
                     giayle = String.valueOf(giayLe);
                 }
 
-                arrayList.add(new ThongTinBaiHat(currentTittle, currentArist, i, currentAlbum, phut + ":" + giayle));
+                mDatabase = new Database(getActivity().getApplicationContext());
 
+                if (mDatabase == null) {
+                    mDatabase.addMusic(new ThongTinBaiHat(currentTittle, currentArist, currentDuration, currentAlbum));
+                }
+
+                arrayList.add(new ThongTinBaiHat(currentTittle, currentArist, i, currentAlbum, phut + ":" + giayle));
                 i++;
 
-
             } while (songCursor.moveToNext());
-            songCursor.close();
 
+            songCursor.close();
 
         }
 
@@ -217,6 +222,7 @@ public class FragmentListSong extends Fragment {
             String s = files[i].getName();
             if (s.endsWith(".mp3")) {
                 mPath.add(files[i].getAbsolutePath());
+
             }
         }
     }
@@ -225,8 +231,6 @@ public class FragmentListSong extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        Log.d("RUN", "onCreateView");
-
         View view = inflater.inflate(R.layout.fragment_list_main, container, false);
         mHinhAlbum = (ImageView) view.findViewById(R.id.hinh_album);
         mPopupMenu = (ImageView) view.findViewById(R.id.other);
@@ -317,7 +321,7 @@ public class FragmentListSong extends Fragment {
         Log.d("RUN", "onDestroy");
     }
 
-    public void animationText() {
+    private void animationText() {
         TranslateAnimation animation = new TranslateAnimation(500.0f, 0.0f, 0.0f, 0.0f);
         animation.setDuration(800);
         animation.setRepeatCount(0);
@@ -327,7 +331,7 @@ public class FragmentListSong extends Fragment {
 
     }
 
-    public void setItemNormal() {
+    private void setItemNormal() {
         for (int i = 0; i < mListBaiHat.getChildCount(); i++) {
             View v = mListBaiHat.getChildAt(i);
             TextView mTime = (TextView) v.findViewById(R.id.time);
@@ -341,7 +345,7 @@ public class FragmentListSong extends Fragment {
         }
     }
 
-    public void setItemSelected(View view) {
+    private void setItemSelected(View view) {
         View rowView = view;
         TextView mNameSong = (TextView) rowView.findViewById(R.id.name_song);
         TextView mTime = (TextView) rowView.findViewById(R.id.time);
@@ -353,11 +357,10 @@ public class FragmentListSong extends Fragment {
     }
 
 
-    public void clickSong() {
+    private void clickSong() {
         mListBaiHat.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
                 mClickPasePlay.setBackgroundResource(R.drawable.ic_media_pause_light);
                 String mLocaltion = mPath.get(i);
                 mCLickTenBaiHat.setTextColor(Color.RED);
@@ -392,7 +395,7 @@ public class FragmentListSong extends Fragment {
     }
 
 
-    public void getImageSong() {
+    private void getImageSong() {
         MediaMetadataRetriever mGetImage = new MediaMetadataRetriever();
         byte[] mRawArt;
         mBitmap = null;
@@ -414,7 +417,7 @@ public class FragmentListSong extends Fragment {
         }
     }
 
-    public void managerSeekBar() {
+    private void managerSeekBar() {
         sendMessage();
         mSeekBarListMain.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -443,7 +446,7 @@ public class FragmentListSong extends Fragment {
 
     }
 
-    public void sendMessage() {
+    private void sendMessage() {
         new Thread(new Runnable() {
             @Override
             public void run() {

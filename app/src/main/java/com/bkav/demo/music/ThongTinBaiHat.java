@@ -20,7 +20,12 @@ public class ThongTinBaiHat {
         Thoigian = thoigian;
     }
 
-
+    public ThongTinBaiHat(String tenBaiHat, String theloai, String thoigian,int hinhAlbum) {
+        TenBaiHat = tenBaiHat;
+        Theloai = theloai;
+        Thoigian = thoigian;
+        HinhAlbum = hinhAlbum;
+    }
 
     public String getTenBaiHat() {
         return TenBaiHat;

@@ -138,7 +138,6 @@ public class ServiceMusic extends Service {
         Random mRandom = new Random();
         mSongIndex = mRandom.nextInt((mArrayListSong.size() - 1) + 1);
         mUriSong = Uri.parse(mArrayListSong.get(mSongIndex).toString());
-        Log.d("HAHAHA", String.valueOf(mArrayListSong.size()));
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer = MediaPlayer.create(getApplicationContext(), mUriSong);
         mMediaPlayer.start();
@@ -192,8 +191,8 @@ public class ServiceMusic extends Service {
     }
 
 
-    public void getLocaltionSong(int mLocal) {
-        mLocalSong = mLocal;
+    public void getLocaltionSong(int localion) {
+        mLocalSong = localion;
 
     }
 

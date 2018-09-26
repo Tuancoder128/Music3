@@ -13,6 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by vst on 10/04/2018.
@@ -22,13 +24,17 @@ public class AdapterBaiHat extends BaseAdapter {
 
     private Context context;
     private int resource;
-    private ArrayList<ThongTinBaiHat> arrayList;
-    private static final String YOU_CLICKTED = "You Clicked ";
+    public static ArrayList<ThongTinBaiHat> arrayList;
+    public static ArrayList<ThongTinBaiHat> arrayListQuery;
+    private static final String YOU_CLICKED = "You Clicked ";
 
     public AdapterBaiHat(Context context, int resource, ArrayList<ThongTinBaiHat> arrayList) {
         this.context = context;
         this.resource = resource;
         this.arrayList = arrayList;
+        this.arrayListQuery = new ArrayList<ThongTinBaiHat>();
+        this.arrayListQuery.addAll(arrayList);
+
     }
 
     private class ViewHolder {
@@ -36,8 +42,6 @@ public class AdapterBaiHat extends BaseAdapter {
         private TextView mTenBaHat;
         private TextView mTime;
         private ImageView mOther;
-
-
     }
 
     @Override
@@ -72,8 +76,6 @@ public class AdapterBaiHat extends BaseAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
         final ThongTinBaiHat thongTinBaiHat = arrayList.get(i);
-
-
         viewHolder.mTenBaHat.setText(thongTinBaiHat.getTenBaiHat());
         viewHolder.mTime.setText(thongTinBaiHat.getThoigian());
         viewHolder.mSoThuTu.setText("" + thongTinBaiHat.getSothutu());
@@ -85,7 +87,7 @@ public class AdapterBaiHat extends BaseAdapter {
 
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        Toast.makeText(context, YOU_CLICKTED + item.getTitle(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, YOU_CLICKED + item.getTitle(), Toast.LENGTH_SHORT).show();
 
                         return true;
                     }
